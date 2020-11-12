@@ -18,9 +18,9 @@ Imports:
     plumber,
     R6
 Collate: 
-    'Plumb.R'
     'Router.R'
-    'ServerConfig-class.R'
+    'api.R'
     'Session-Class.R'
+    'SessionConfig-Class.R'
 Depends: 
     R (>= 2.10)

@@ -21,8 +21,7 @@ Collate:
     'Plumb.R'
     'Router.R'
     'ServerConfig-class.R'
+    'api.R'
     'Session-Class.R'
-    'run.R'
-    'x.R'
 Depends: 
     R (>= 2.10)

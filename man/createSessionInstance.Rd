@@ -2,12 +2,13 @@
 % Please edit documentation in R/Session-Class.R
 \name{createSessionInstance}
 \alias{createSessionInstance}
-\title{Creates a server instance}
+\title{Creates a new instance from the class 'SessionInstance' and assigns the name 'Session'}
 \usage{
 createSessionInstance(configuration = NULL)
 }
+\arguments{
+\item{configuration}{Session configuration}
+}
 \description{
-The function creates a new server instance on the global variable 'openeo.server'. The names for
-this variable is reserved and should not be changed by any means. It will crash the system, since
-many endpoints will be accessing and depending on the correctly set variable 'openeo.server'.
+Creates a new instance from the class 'SessionInstance' and assigns the name 'Session'
 }

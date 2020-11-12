@@ -1,59 +1,97 @@
-#config = ServerConfig()
-
-#' Session
+#' Session class
 #'
-#' This is the session class
+#' @field processes Package processes
+#' @field data Data of current SessionInstance
 #'
-#' @field processes This field is also managed during runtime. Here all template processes are listed
-#' @field data A list of products offered by the service which is managed at runtime.
-#'
+#' @include api.R
 #' @importFrom R6 R6Class
+#' @importFrom tibble add_row
 #' @import plumber
 #' @export
-Session <- R6Class(
-  "Session",
+SessionInstance <- R6Class(
+  "SessionInstance",
   public = list(
 
-    # attributes
     processes = NULL,
     data = NULL,
 
-    # functions
-    initialize = function(configuration = NULL) {
+    #' @description Create a new session
+    initialize = function() {
 
       self$processes = list()
       self$data = list()
 
-      private$config = configuration
+      private$config = SessionConfig()
+
+      self$initEndpoints()
 
     },
 
+    #' @description Get endpoints
+    #'
+    #' @return endpoints
     getEndpoints = function() {
       return(private$endpoints)
     },
 
+    #' @description Get configuration
+    #'
+    #' @return configuration
     getConfig = function() {
       return(private$config)
     },
 
-    startup = function(){
+    #' @description Start the session
+    startSession = function(){
 
       private$initRouter()
+      self$initDirectory()
 
-      private$router$run(port=8000,host="127.0.0.1")
+      addEndpoint()
+
+      private$router$run(port=private$config$api.port, host=private$config$host)
+    },
+
+    #' @description initializes workspace and data paths
+    initDirectory = function() {
+
+      if (is.null(private$config$workspace.path)) {
+        private$config$workspace.path <- getwd()
+      }
+
+      if (is.null(private$config$data.path)) {
+        private$config$data.path <- paste(private$config$workspace.path,"data",sep="/")
+      }
+    },
+
+    #' @description biuld a df to add the endpoints later on
+    initEndpoints = function() {
+      private$endpoints = tibble(path=character(0), method = character(0))
+    },
+
+    #' @description Create an endpoint
+    #'
+    #' @param path path for the endpoint
+    #' @param method type of request
+    #' @param handler function to be executed
+    #'
+    #' @return created Endpoint
+    createEndpoint = function(path, method, handler=NULL) {
+
+      private$endpoints = private$endpoints %>% add_row(path=path,method=method)
+
+    # TO DO: if (is.null(handler))
+
+      private$router$handle(path = path, method = method, handler = handler)
+
     }
-
-
   ),
 
-  # private ----
   private = list(
-    # attributes ====
-    endpoints = NULL,
-    router = NULL, # plumber class
-    config = NULL,
 
-    # functions
+    endpoints = NULL,
+    router = NULL,
+    config = NULL,
 
     initRouter = function(){
 
@@ -64,17 +102,10 @@ Session <- R6Class(
 )
 
 
-
-
-
-#' Creates a server instance
-#'
-#' The function creates a new server instance on the global variable 'openeo.server'. The names for
-#' this variable is reserved and should not be changed by any means. It will crash the system, since
-#' many endpoints will be accessing and depending on the correctly set variable 'openeo.server'.
+#' Creates a new instance from the class 'SessionInstance' and assigns the name 'Session'
 #'
 #' @export
 createSessionInstance = function(configuration = NULL) {
-  assign("SessionInstance", Session$new(configuration),envir=.GlobalEnv)
-  invisible(SessionInstance)
+  assign("Session", SessionInstance$new(),envir=.GlobalEnv)
+  invisible(Session)
 }
