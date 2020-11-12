@@ -12,7 +12,7 @@ Router class
 Initialize router
 }
 \section{Super classes}{
-\code{\link[plumber:Hookable]{plumber::Hookable}} -> \code{\link[plumber:Plumber]{plumber::Plumber}} -> \code{\link[plumber:plumber]{plumber::plumber}} -> \code{Router}
+\code{\link[plumber:Hookable]{plumber::Hookable}} -> \code{\link[plumber:Plumber]{plumber::Plumber}} -> \code{Router}
 }
 \section{Methods}{
 \subsection{Public methods}{

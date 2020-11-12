@@ -1,7 +1,7 @@
 #' Router class
 Router = R6Class(
   "Router",
-  inherit = plumber,
+  inherit = Plumber,
 
   public = list(
     #' Initialize router
