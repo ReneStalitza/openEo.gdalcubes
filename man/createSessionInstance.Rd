@@ -6,9 +6,6 @@
 \usage{
 createSessionInstance(configuration = NULL)
 }
-\arguments{
-\item{configuration}{Session configuration}
-}
 \description{
 Creates a new instance from the class 'SessionInstance' and assigns the name 'Session'
 }
