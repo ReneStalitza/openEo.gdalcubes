@@ -8,6 +8,7 @@ install_github(repo="ReneStalitza/openEo.gdalcubes",ref="main")
 
 ## Getting started
 ```
+library(openEo.gdalcubes)
 createSessionInstance()
 Session$startSession()
 ```
