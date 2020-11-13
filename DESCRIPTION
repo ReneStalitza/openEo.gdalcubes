@@ -16,7 +16,8 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Imports: 
     plumber,
-    R6
+    R6,
+    dplyr
 Collate: 
     'Router.R'
     'api.R'
