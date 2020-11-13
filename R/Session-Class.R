@@ -49,10 +49,13 @@ SessionInstance <- R6Class(
 
       addEndpoint()
 
+      loadDemoData()
+
       private$router$run(port=private$config$api.port, host=private$config$host)
     },
 
     #' @description initializes workspace and data paths
+    #'
     initDirectory = function() {
 
       if (is.null(private$config$workspace.path)) {
@@ -65,6 +68,7 @@ SessionInstance <- R6Class(
     },
 
     #' @description biuld a df to add the endpoints later on
+    #'
     initEndpoints = function() {
       private$endpoints = tibble(path=character(0), method = character(0))
     },
@@ -76,6 +80,7 @@ SessionInstance <- R6Class(
     #' @param handler function to be executed
     #'
     #' @return created Endpoint
+    #'
     createEndpoint = function(path, method, handler=NULL) {
 
       private$endpoints = private$endpoints %>% add_row(path=path,method=method)
@@ -83,6 +88,25 @@ SessionInstance <- R6Class(
     # TO DO: if (is.null(handler))
 
       private$router$handle(path = path, method = method, handler = handler)
+
+    },
+
+    #' @description Function to assign data of collection to the data path
+    #'
+    #' @param col Collection of class 'Collection'
+    #'
+    assignData = function(col) {
+
+      if(! is.Collection(col)) {
+        stop("Assigned data is not a collection")
+      }
+
+      if (is.null(self$data)) {
+        self$data = list()
+      }
+      newCol = list(col)
+      names(newCol) = col$id
+      self$data = append(self$data, newCol)
 
     }
   ),

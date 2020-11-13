@@ -5,7 +5,7 @@
 #' @include Router.R
 
 
-#' Capailities handler
+#' @title Capailities handler
 .capabilities = function() {
 
   config = Session$getConfig()
@@ -64,6 +64,21 @@
 
 }
 
+.collections = function() {
+
+  data = Session$data
+  list(collections = unname(lapply(data, function(x) {
+   return(x$collectionInfo())
+    })),
+   links = list(
+     rel = "self",
+     href = paste(Session$getConfig()$base_url, "collections", sep = "/")
+   )
+
+
+  )
+
+}
 
 #' dedicate the handler functions to the corresponding paths
 addEndpoint = function() {
@@ -83,4 +98,8 @@ addEndpoint = function() {
   Session$createEndpoint(path = "/conformance",
                          method = "GET",
                          handler = .conformance)
+
+  Session$createEndpoint(path = "/collections",
+                         method = "GET",
+                         handler = .collections)
 }

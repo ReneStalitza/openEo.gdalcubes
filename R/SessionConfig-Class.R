@@ -10,7 +10,7 @@ SessionConfig = function() {
   default = list(
     api_version = "1.0.0",
     backend_version = "0.1.0",
-    stac_version = "1.0.0",
+    stac_version = "0.9.0",
 
     id = "openeo-gdalcubes-R-driver",
     title = "gdalcubes",

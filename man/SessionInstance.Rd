@@ -27,6 +27,7 @@ Session class
 \item \href{#method-initDirectory}{\code{SessionInstance$initDirectory()}}
 \item \href{#method-initEndpoints}{\code{SessionInstance$initEndpoints()}}
 \item \href{#method-createEndpoint}{\code{SessionInstance$createEndpoint()}}
+\item \href{#method-assignData}{\code{SessionInstance$assignData()}}
 \item \href{#method-clone}{\code{SessionInstance$clone()}}
 }
 }
@@ -118,6 +119,23 @@ Create an endpoint
 }
 \subsection{Returns}{
 created Endpoint
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-assignData"></a>}}
+\if{latex}{\out{\hypertarget{method-assignData}{}}}
+\subsection{Method \code{assignData()}}{
+Function to assign data of collection to the data path
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{SessionInstance$assignData(col)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{col}}{Collection of class 'Collection'}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
