@@ -74,10 +74,27 @@
      rel = "self",
      href = paste(Session$getConfig()$base_url, "collections", sep = "/")
    )
-
-
   )
+}
 
+.collectionId = function(req, res, collection_id) {
+
+  return (Session$data[[collection_id]]$collectionInfoExtended())
+
+}
+
+.cors_filter = function(req,res) {
+  res$setHeader("Access-Control-Allow-Origin", req$HTTP_ORIGIN)
+  res$setHeader("Access-Control-Expose-Headers", "Location, OpenEO-Identifier, OpenEO-Costs")
+  forward()
+}
+
+.cors_option = function(req,res, ...) {
+  res$setHeader("Access-Control-Allow-Headers", "Content-Type")
+  res$setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS,PATCH")
+
+
+  res$status = 204
 }
 
 #' dedicate the handler functions to the corresponding paths
@@ -102,4 +119,8 @@ addEndpoint = function() {
   Session$createEndpoint(path = "/collections",
                          method = "GET",
                          handler = .collections)
+
+  Session$createEndpoint(path = "/collections/<collection_id>",
+                         method = "GET",
+                         handler = .collectionId)
 }

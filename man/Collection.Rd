@@ -28,6 +28,7 @@ Collection Class
 \item \href{#method-setMetadata}{\code{Collection$setMetadata()}}
 \item \href{#method-getMetadata}{\code{Collection$getMetadata()}}
 \item \href{#method-collectionInfo}{\code{Collection$collectionInfo()}}
+\item \href{#method-collectionInfoExtended}{\code{Collection$collectionInfoExtended()}}
 \item \href{#method-clone}{\code{Collection$clone()}}
 }
 }
@@ -115,6 +116,16 @@ metadata of the collection
 List metadata for the collection handler
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Collection$collectionInfo()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-collectionInfoExtended"></a>}}
+\if{latex}{\out{\hypertarget{method-collectionInfoExtended}{}}}
+\subsection{Method \code{collectionInfoExtended()}}{
+List extended metadata for the collection handler
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Collection$collectionInfoExtended()}\if{html}{\out{</div>}}
 }
 
 }

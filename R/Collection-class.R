@@ -91,8 +91,35 @@ Collection <- R6Class(
         links = NULL
 
       )
-    }
+    },
 
+    #' @description List extended metadata for the collection handler
+    #'
+    collectionInfoExtended = function() {
+      list(
+        stac_version = Session$getConfig()$stac_version,
+        stac_extensions = Session$getConfig()$stac_extensions,
+        id = self$id,
+        title = self$title,
+        description = self$description,
+        license = NULL,
+        extent = list(
+          spatial = list(
+            bbox = list(self$getMetadata()$extent$left, self$getMetadata()$extent$bottom,
+                        self$getMetadata()$extent$right, self$getMetadata()$extent$top)
+          ),
+          temporal = list(
+            interval = list(self$getMetadata()$extent$t0, self$getMetadata()$extent$t1)
+          )
+        ),
+        links = list(
+          rel = "root",
+          href = paste(Session$getConfig()$base_url, "collections", sep = "/")
+        ),
+        "cube:dimensions" = list(),
+        summaries = NULL
+      )
+    }
   ),
 
   private = list(

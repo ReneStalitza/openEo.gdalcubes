@@ -11,6 +11,7 @@ SessionConfig = function() {
     api_version = "1.0.0",
     backend_version = "0.1.0",
     stac_version = "0.9.0",
+    stac_extensions = "datacube",
 
     id = "openeo-gdalcubes-R-driver",
     title = "gdalcubes",

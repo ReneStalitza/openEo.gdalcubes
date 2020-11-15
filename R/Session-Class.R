@@ -88,6 +88,7 @@ SessionInstance <- R6Class(
     # TO DO: if (is.null(handler))
 
       private$router$handle(path = path, method = method, handler = handler)
+      private$router$handle(path = path, methods = "OPTIONS", handler = .cors_option)
 
     },
 
@@ -96,6 +97,10 @@ SessionInstance <- R6Class(
     #' @param col Collection of class 'Collection'
     #'
     assignData = function(col) {
+
+      if (col$id %in% names(Session$data)) {
+        stop("This collection id is already assigned")
+      }
 
       if(! is.Collection(col)) {
         stop("Assigned data is not a collection")
@@ -120,6 +125,8 @@ SessionInstance <- R6Class(
     initRouter = function(){
 
       private$router = Router$new()
+
+      private$router$registerHook("postroute",.cors_filter)
     }
 
   )
