@@ -85,11 +85,26 @@ SessionInstance <- R6Class(
 
       private$endpoints = private$endpoints %>% add_row(path=path,method=method)
 
-    # TO DO: if (is.null(handler))
+      vPath = paste("/v1.0", path, sep = "")
 
-      private$router$handle(path = path, method = method, handler = handler)
-      private$router$handle(path = path, methods = "OPTIONS", handler = .cors_option)
+      private$router$handle(path = vPath, method = method, handler = handler)
+      private$router$handle(path = vPath, methods = "OPTIONS", handler = .cors_option)
 
+    },
+
+    #' @description redirect to well-known/openeo
+    #'
+    #' @param path path for the endpoint
+    #' @param method type of request
+    #'
+    redirect = function(path, method) {
+
+      redirected = function(req, res) {
+        res$status <- 302 # redirect
+        res$setHeader("Location", "./v1.0/.well-known/openeo")
+      }
+
+      private$router$handle(path = path, method = method, handler = redirected)
     },
 
     #' @description Function to assign data of collection to the data path
