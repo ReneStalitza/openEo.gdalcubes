@@ -83,6 +83,10 @@
 
 }
 
+.processes = function() {
+  return(Session$processes)
+}
+
 .cors_filter = function(req,res) {
   res$setHeader("Access-Control-Allow-Origin", req$HTTP_ORIGIN)
   res$setHeader("Access-Control-Expose-Headers", "Location, OpenEO-Identifier, OpenEO-Costs")
@@ -123,4 +127,8 @@ addEndpoint = function() {
   Session$createEndpoint(path = "/collections/<collection_id>",
                          method = "GET",
                          handler = .collectionId)
+
+  Session$createEndpoint(path = "/processes",
+                         method = "GET",
+                         handler = .processes)
 }
