@@ -104,9 +104,6 @@
 #' dedicate the handler functions to the corresponding paths
 addEndpoint = function() {
 
-  Session$redirect(path = "/",
-                         method = "GET")
-
   Session$createEndpoint(path = "/",
                          method = "GET",
                          handler = .capabilities)
@@ -135,4 +132,8 @@ addEndpoint = function() {
   Session$createEndpoint(path = "/processes",
                          method = "GET",
                          handler = .processes)
+
+  Session$redirect(path = "/",
+                   method = "GET")
+
 }
