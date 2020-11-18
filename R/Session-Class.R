@@ -62,6 +62,10 @@ SessionInstance <- R6Class(
         private$config$workspace.path <- getwd()
       }
 
+      if (! dir.exists(paste(private$config$workspace.path, "data", sep = "/"))) {
+        dir.create(paste(private$config$workspace.path, "data", sep = "/"))
+      }
+
       if (is.null(private$config$data.path)) {
         private$config$data.path <- paste(private$config$workspace.path,"data",sep="/")
       }
@@ -81,14 +85,16 @@ SessionInstance <- R6Class(
     #'
     #' @return created Endpoint
     #'
-    createEndpoint = function(path, method, handler=NULL) {
+    createEndpoint = function(path, method, handler=NULL, optional = FALSE) {
 
       private$endpoints = private$endpoints %>% add_row(path=path,method=method)
 
-      vPath = paste("/v1.0", path, sep = "")
+      if (optional == FALSE) {
+        path = paste("/v1.0", path, sep = "")
+      }
 
-      private$router$handle(path = vPath, method = method, handler = handler)
-      private$router$handle(path = vPath, methods = "OPTIONS", handler = .cors_option)
+        private$router$handle(path = path, method = method, handler = handler)
+        private$router$handle(path = path, methods = "OPTIONS", handler = .cors_option)
 
     },
 
@@ -101,7 +107,7 @@ SessionInstance <- R6Class(
 
       redirected = function(req, res) {
         res$status <- 302 # redirect
-        res$setHeader("Location", "./v1.0/.well-known/openeo")
+        res$setHeader("Location", "./.well-known/openeo")
       }
 
       private$router$handle(path = path, method = method, handler = redirected)
