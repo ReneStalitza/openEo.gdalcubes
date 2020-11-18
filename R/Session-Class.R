@@ -85,16 +85,12 @@ SessionInstance <- R6Class(
     #'
     #' @return created Endpoint
     #'
-    createEndpoint = function(path, method, handler=NULL, optional = FALSE) {
+    createEndpoint = function(path, method, handler=NULL) {
 
       private$endpoints = private$endpoints %>% add_row(path=path,method=method)
 
-      if (optional == FALSE) {
-        path = paste("/v1.0", path, sep = "")
-      }
-
-        private$router$handle(path = path, method = method, handler = handler)
-        private$router$handle(path = path, methods = "OPTIONS", handler = .cors_option)
+      private$router$handle(path = path, method = method, handler = handler)
+      private$router$handle(path = path, methods = "OPTIONS", handler = .cors_option)
 
     },
 
