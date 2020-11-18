@@ -20,7 +20,6 @@ Collection <- R6Class(
     #' @param title Collection title
     #' @param description Short description of the collection
     #'
-    #' @return
     initialize = function(id = NA, title = NA, description = NA) {
 
       self$id = id
