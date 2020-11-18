@@ -113,7 +113,8 @@ addEndpoint = function() {
 
   Session$createEndpoint(path = "/.well-known/openeo",
                          method = "GET",
-                         handler = .well_known)
+                         handler = .well_known,
+                         optional = TRUE)
 
   Session$createEndpoint(path = "/file_formats",
                          method = "GET",
