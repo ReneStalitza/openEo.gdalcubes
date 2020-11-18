@@ -33,13 +33,18 @@
 .well_known = function() {
 
   config = Session$getConfig()
+  version = list(versions = list())
 
-  list(
-    versions = list(
-      url = config$base_url,
-      api_version = config$api_version
-    )
-  )
+
+  obj = tibble::tibble(url = config$base_url,
+                       api_version = config$api_version,
+                       production = FALSE)
+  version$versions = obj
+  #version = array(version)
+
+
+  return(version)
+
 
 }
 
@@ -110,8 +115,7 @@ addEndpoint = function() {
 
   Session$createEndpoint(path = "/.well-known/openeo",
                          method = "GET",
-                         handler = .well_known,
-                         optional = TRUE)
+                         handler = .well_known)
 
   Session$createEndpoint(path = "/file_formats",
                          method = "GET",
@@ -132,8 +136,4 @@ addEndpoint = function() {
   Session$createEndpoint(path = "/processes",
                          method = "GET",
                          handler = .processes)
-
-  Session$redirect(path = "/",
-                   method = "GET")
-
 }
