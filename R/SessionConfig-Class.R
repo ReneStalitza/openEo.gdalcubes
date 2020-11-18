@@ -24,7 +24,7 @@ SessionConfig = function() {
 
     api.port = api.port,
     host = host,
-    base_url = paste("http://",host, ":", api.port, "/v1.0/", sep = ""),
+    base_url = paste("http://",host, ":", api.port,  sep = ""),
 
     outputFormats = list(
       GTiff = list(
