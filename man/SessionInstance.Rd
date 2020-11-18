@@ -104,7 +104,7 @@ biuld a df to add the endpoints later on
 \subsection{Method \code{createEndpoint()}}{
 Create an endpoint
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{SessionInstance$createEndpoint(path, method, handler = NULL, optional = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{SessionInstance$createEndpoint(path, method, handler = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
