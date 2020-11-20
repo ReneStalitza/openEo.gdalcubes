@@ -2,7 +2,7 @@
 % Please edit documentation in R/api.R
 \name{.capabilities}
 \alias{.capabilities}
-\title{Capailities handler}
+\title{api}
 \usage{
 .capabilities()
 }

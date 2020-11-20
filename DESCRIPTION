@@ -20,6 +20,9 @@ Imports:
     dplyr,
     gdalcubes
 Collate: 
+    'Parameter-class.R'
+    'Process-class.R'
+    'processes.R'
     'Router.R'
     'api.R'
     'Session-Class.R'

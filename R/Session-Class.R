@@ -94,21 +94,6 @@ SessionInstance <- R6Class(
 
     },
 
-    #' @description redirect to well-known/openeo
-    #'
-    #' @param path path for the endpoint
-    #' @param method type of request
-    #'
-    redirect = function(path, method) {
-
-      redirected = function(req, res) {
-        res$status <- 302 # redirect
-        res$setHeader("Location", "./.well-known/openeo")
-      }
-
-      private$router$handle(path = path, method = method, handler = redirected)
-    },
-
     #' @description Function to assign data of collection to the data path
     #'
     #' @param col Collection of class 'Collection'
@@ -129,6 +114,29 @@ SessionInstance <- R6Class(
       newCol = list(col)
       names(newCol) = col$id
       self$data = append(self$data, newCol)
+
+    },
+
+    #' @description Function to assign the process to the Session
+    #'
+    #' @param pro Process of class 'Process'
+    #'
+    assignProcess = function(pro) {
+
+      if (pro$id %in% names(Session$processes)) {
+        stop("This process is already assigned")
+      }
+
+      if(! is.Process(pro)) {
+        stop("Assigned process is not a process")
+      }
+
+      if (is.null(self$process)) {
+        self$data = list()
+      }
+      newPro = list(pro)
+      names(newPro) = pro$id
+      self$processes = append(self$processes, newPro)
 
     }
   ),

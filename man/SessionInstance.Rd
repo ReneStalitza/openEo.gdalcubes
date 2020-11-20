@@ -27,8 +27,8 @@ Session class
 \item \href{#method-initDirectory}{\code{SessionInstance$initDirectory()}}
 \item \href{#method-initEndpoints}{\code{SessionInstance$initEndpoints()}}
 \item \href{#method-createEndpoint}{\code{SessionInstance$createEndpoint()}}
-\item \href{#method-redirect}{\code{SessionInstance$redirect()}}
 \item \href{#method-assignData}{\code{SessionInstance$assignData()}}
+\item \href{#method-assignProcess}{\code{SessionInstance$assignProcess()}}
 \item \href{#method-clone}{\code{SessionInstance$clone()}}
 }
 }
@@ -123,25 +123,6 @@ created Endpoint
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-redirect"></a>}}
-\if{latex}{\out{\hypertarget{method-redirect}{}}}
-\subsection{Method \code{redirect()}}{
-redirect to well-known/openeo
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{SessionInstance$redirect(path, method)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{path}}{path for the endpoint}
-
-\item{\code{method}}{type of request}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-assignData"></a>}}
 \if{latex}{\out{\hypertarget{method-assignData}{}}}
 \subsection{Method \code{assignData()}}{
@@ -154,6 +135,23 @@ Function to assign data of collection to the data path
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{col}}{Collection of class 'Collection'}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-assignProcess"></a>}}
+\if{latex}{\out{\hypertarget{method-assignProcess}{}}}
+\subsection{Method \code{assignProcess()}}{
+Function to assign the process to the Session
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{SessionInstance$assignProcess(pro)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pro}}{Process of class 'Process'}
 }
 \if{html}{\out{</div>}}
 }

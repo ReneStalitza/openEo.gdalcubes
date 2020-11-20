@@ -1,11 +1,13 @@
+#' @title api
 #' @description handler functions and creating corresponding endpoints
 #
 #' @import dplyr
 #' @include Session-Class.R
 #' @include Router.R
+#' @include processes.R
 
 
-#' @title Capailities handler
+#' Capailities handler
 .capabilities = function() {
 
   config = Session$getConfig()
@@ -36,12 +38,10 @@
   version = list(versions = list())
 
 
-  obj = tibble::tibble(url = config$base_url,
-                       api_version = config$api_version,
-                       production = FALSE)
+  obj = tibble(url = config$base_url,
+               api_version = config$api_version,
+               production = FALSE)
   version$versions = obj
-  #version = array(version)
-
 
   return(version)
 
@@ -89,7 +89,21 @@
 }
 
 .processes = function() {
-  return(Session$processes)
+
+  processes = list(processes=unname(lapply(Session$processes, function(process){
+    return(process$processInfo())
+  })))
+
+  links = list(
+    rel = "self",
+    href = paste(Session$getConfig()$base_url, "processes", sep = "/")
+  )
+
+  result = as.vector(c(links =list(links), processes))
+
+  return(result)
+
+
 }
 
 .cors_filter = function(req,res) {
@@ -105,6 +119,8 @@
 
   res$status = 204
 }
+
+
 
 #' dedicate the handler functions to the corresponding paths
 addEndpoint = function() {
@@ -136,4 +152,7 @@ addEndpoint = function() {
   Session$createEndpoint(path = "/processes",
                          method = "GET",
                          handler = .processes)
+
+  Session$assignProcess(load_collection)
+  Session$assignProcess(load_collectionB)
 }
