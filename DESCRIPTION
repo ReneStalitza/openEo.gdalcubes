@@ -20,6 +20,7 @@ Imports:
     dplyr,
     gdalcubes
 Collate: 
+    'api_jobs.R'
     'Parameter-class.R'
     'Process-class.R'
     'processes.R'
@@ -27,6 +28,9 @@ Collate:
     'api.R'
     'Session-Class.R'
     'Collection-class.R'
+    'ExecutableProcess-class.R'
+    'Job-class.R'
+    'ProcessGraph-class.R'
     'SessionConfig-Class.R'
     'load.R'
 Depends: 
