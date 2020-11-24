@@ -5,6 +5,7 @@
 #' @field description Short description of the collection
 #'
 #' @include Session-Class.R
+#' @importFrom R6 R6Class
 Collection <- R6Class(
   "Collection",
   public = list(
@@ -77,18 +78,25 @@ Collection <- R6Class(
         id = self$id,
         title = self$title,
         description = self$description,
-        license = NULL,
+        license = "proprietary",
         extent = list(
           spatial = list(
-            bbox = list(self$getMetadata()$extent$left, self$getMetadata()$extent$bottom,
-            self$getMetadata()$extent$right, self$getMetadata()$extent$top)
+            bbox = list(list(self$getMetadata()$extent$left, self$getMetadata()$extent$bottom,
+            self$getMetadata()$extent$right, self$getMetadata()$extent$top))
           ),
           temporal = list(
-            interval = list(self$getMetadata()$extent$t0, self$getMetadata()$extent$t1)
+            interval = list(list(self$getMetadata()$extent$t0, self$getMetadata()$extent$t1))
           )
         ),
-        links = NULL
-
+       links = list(
+         list(
+           rel = "self",
+           href = paste(Session$getConfig()$base_url, "collections", self$id, sep = "/")
+         ),
+         list(
+           rel = "parent",
+           href = paste(Session$getConfig()$base_url, "collections", sep = "/")
+         ))
       )
     },
 
@@ -97,26 +105,47 @@ Collection <- R6Class(
     collectionInfoExtended = function() {
       list(
         stac_version = Session$getConfig()$stac_version,
-        stac_extensions = Session$getConfig()$stac_extensions,
+        stac_extensions = list(Session$getConfig()$stac_extensions),
         id = self$id,
         title = self$title,
         description = self$description,
-        license = NULL,
+        license = "proprietary",
         extent = list(
           spatial = list(
-            bbox = list(self$getMetadata()$extent$left, self$getMetadata()$extent$bottom,
-                        self$getMetadata()$extent$right, self$getMetadata()$extent$top)
+            bbox = list(list(self$getMetadata()$extent$left, self$getMetadata()$extent$bottom,
+                             self$getMetadata()$extent$right, self$getMetadata()$extent$top))
           ),
           temporal = list(
-            interval = list(self$getMetadata()$extent$t0, self$getMetadata()$extent$t1)
+            interval = list(list(self$getMetadata()$extent$t0, self$getMetadata()$extent$t1))
           )
         ),
-        links = list(
+        links = list(list(
           rel = "root",
-          href = paste(Session$getConfig()$base_url, "collections", sep = "/")
+          href = paste(Session$getConfig()$base_url, "collections", sep = "/"))
         ),
-        "cube:dimensions" = list(),
-        summaries = NULL
+        "cube:dimensions" = list(
+          x = list(
+            type = "spatial",
+            axis = "x",
+            extent = list(self$getMetadata()$extent$left, self$getMetadata()$extent$right
+            )
+          ),
+          y = list(
+            type = "spatial",
+            axis = "y",
+            extent = list(self$getMetadata()$extent$bottom, self$getMetadata()$extent$top
+            )
+          ),
+          t = list(
+            type = "temporal",
+            extent = list(self$getMetadata()$extent$t0, self$getMetadata()$extent$t1)
+          ),
+          bands = list(
+            type = "bands",
+            values = list(self$getMetadata()$bands)
+          )
+        ),
+        summaries = list(constellation = list("Landsat8"))
       )
     }
   ),
