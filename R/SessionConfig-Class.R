@@ -30,19 +30,40 @@ SessionConfig = function() {
       GTiff = list(
         title = "GeoTiff",
         description = "Export to GeoTiff",
-        gis_data_types = list(
-          "raster"
-        )
+        gis_data_types = list("raster"),
+        parameters = list(
+          compress = list(
+            type = "integer",
+            description = "Compression level"
+            )
+          )
       ),
       NetCDF = list(
         title = "Network Common Data Form",
         description = "Export to NetCDF",
-        gis_data_types = list(
-          "raster"
+        gis_data_types = list("raster"),
+        parameters = list(
+          compress = list(
+            type = "integer",
+            description = "Compression level"
+          )
         )
       )
     ),
-    inputFormats = NULL,
+    inputFormats = list(
+      ImageCollection = list(
+        title = "ImageCollection",
+        description = "Import from image collection",
+        gis_data_types = list("raster"),
+        parameters = list(
+          format = list(
+            type = "string",
+            description = "gdalcubes collection formats"
+          )
+        )
+
+      )
+    ),
 
     OGC_conformanceLink = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core")
 
