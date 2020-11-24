@@ -2,19 +2,20 @@
 #'
 #' @field name Name of the parameter
 #' @field description Short description of the parameter
-#' @field type Type of the parameter
-#' @field subtype More specific type of the parameter
+#' @field schema Type and subtype of the parameter
+#' @field optional Is this parameter required for the process
 #'
 #' @include Process-class.R
 #' @importFrom R6 R6Class
+#'
 #' @export
 Parameter <- R6Class(
   "Parameter",
   public = list(
     name = NA,
     description = NA,
-    type = NA,
-    subtype = NA,
+    schema = NA,
+    optional = NA,
 
     #' @description
     #'
@@ -22,17 +23,17 @@ Parameter <- R6Class(
     #' @param description Short description of the parameter
     #' @param type Type of the parameter
     #' @param subtype More specific type of the parameter
+    #' @param optional Is this parameter required for the process
     #'
     initialize = function(name = NA,
                           description = NA,
                           type = NA,
-                          subtype = NA) {
+                          subtype = NA,
+                          optional = NA) {
 
       self$name = name
       self$description = description
-      self$type = type
-      self$subtype = subtype
-
+      self$schema = schema_format(type, subtype)
     },
 
 
@@ -45,8 +46,8 @@ Parameter <- R6Class(
       info = appendInfo(
         name = self$name,
         description = self$description,
-        type = self$type,
-        subtype = self$subtype)
+        schema = self$schema
+        )
 
 
       return(info)
@@ -56,6 +57,7 @@ Parameter <- R6Class(
 )
 
 #' appendInfo
+#'
 #' @description Create a list with appended parameter
 #'
 #' @param name name of parameter
@@ -65,18 +67,15 @@ Parameter <- R6Class(
 #'
 #' @return list with appended parameter
 #'
-appendInfo = function(name, description, type, subtype = NA) {
+appendInfo = function(name, description, schema, optional = NA) {
 
   info = list()
   info = append(info, list(name = name))
   info = append(info, list(description = description))
-  info = append(info, list(type = type))
+  info = append(info, list(schema = schema))
 
-  if (! is.na(subtype)) {
-    info = append(info, list(subtype = subtype))
+  if (! is.na(optional)) {
+    info = append(info, list(optional = optional))
   }
   return(info)
 }
-
-
-
