@@ -5,7 +5,7 @@
 \alias{load_collection}
 \title{load collection}
 \format{
-An object of class \code{Process} (inherits from \code{R6}) of length 11.
+An object of class \code{Process} (inherits from \code{R6}) of length 12.
 }
 \usage{
 load_collection

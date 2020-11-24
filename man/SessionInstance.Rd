@@ -11,9 +11,13 @@ Session class
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
+\item{\code{graphs}}{User defined process graphs}
+
 \item{\code{processes}}{Package processes}
 
-\item{\code{data}}{Data of current SessionInstance}
+\item{\code{data}}{Data of current Session}
+
+\item{\code{jobs}}{Stored jobs of current Session}
 }
 \if{html}{\out{</div>}}
 }

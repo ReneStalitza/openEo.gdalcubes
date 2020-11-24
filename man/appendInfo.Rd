@@ -4,7 +4,7 @@
 \alias{appendInfo}
 \title{appendInfo}
 \usage{
-appendInfo(name, description, type, subtype = NA)
+appendInfo(name, description, schema, optional = NA)
 }
 \arguments{
 \item{name}{name of parameter}
