@@ -32,6 +32,7 @@ Process
 \itemize{
 \item \href{#method-new}{\code{Process$new()}}
 \item \href{#method-processInfo}{\code{Process$processInfo()}}
+\item \href{#method-setParameter}{\code{Process$setParameter()}}
 \item \href{#method-clone}{\code{Process$clone()}}
 }
 }
@@ -81,6 +82,25 @@ List information about the process
 \if{html}{\out{<div class="r">}}\preformatted{Process$processInfo()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setParameter"></a>}}
+\if{latex}{\out{\hypertarget{method-setParameter}{}}}
+\subsection{Method \code{setParameter()}}{
+Set parameter for the executable process graph
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Process$setParameter(name, value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{Name of parameter}
+
+\item{\code{value}}{Value to be set}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
