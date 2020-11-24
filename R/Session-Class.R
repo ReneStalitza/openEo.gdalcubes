@@ -1,7 +1,9 @@
 #' Session class
 #'
+#' @field graphs User defined process graphs
 #' @field processes Package processes
-#' @field data Data of current SessionInstance
+#' @field data Data of current Session
+#' @field jobs Stored jobs of current Session
 #'
 #' @include api.R
 #' @importFrom R6 R6Class
@@ -12,12 +14,15 @@ SessionInstance <- R6Class(
   "SessionInstance",
   public = list(
 
+    graphs = NULL,
     processes = NULL,
     data = NULL,
+    jobs =NULL,
 
     #' @description Create a new session
     initialize = function() {
 
+      self$graphs = list()
       self$processes = list()
       self$data = list()
 
@@ -89,8 +94,9 @@ SessionInstance <- R6Class(
 
       private$endpoints = private$endpoints %>% add_row(path=path,method=method)
 
-      private$router$handle(path = path, method = method, handler = handler)
-      private$router$handle(path = path, methods = "OPTIONS", handler = .cors_option)
+      replPath = path %>% gsub(pattern="\\{",replacement="<") %>% gsub(pattern="\\}",replacement=">")
+      private$router$handle(path = replPath, method = method, handler = handler)
+      private$router$handle(path = replPath, methods = "OPTIONS", handler = .cors_option)
 
     },
 
