@@ -5,9 +5,10 @@
 #' @include Session-Class.R
 #' @include Router.R
 #' @include processes.R
+#' @include api_jobs.R
 
 
-#' Capailities handler
+#' Capabilities handler
 .capabilities = function() {
 
   config = Session$getConfig()
@@ -20,16 +21,20 @@
     }))
   )
 
-  list(
-    api_version = config$api_version,
-    backend_version = config$backend_version,
-    stac_version = config$stac_version,
-    id = config$id,
-    title = config$title,
-    description = config$description,
-    endpoints = endpoints$paths
-    # TO DO: links
-  )
+  list = list()
+    list$api_version = config$api_version
+    list$backend_version = config$backend_version
+    list$stac_version = config$stac_version
+    list$id = config$id
+    list$title = config$title
+    list$description = config$description
+    list$endpoints = endpoints$paths
+    list$links = list(list(
+      rel = "self",
+      href = paste(Session$getConfig()$base_url, "", sep = "/")))
+
+  return(list)
+
 }
 
 .well_known = function() {
@@ -52,10 +57,12 @@
 
   config = Session$getConfig()
 
-  list(
-    output = config$outputFormats,
-    input = config$inputFormats
-  )
+  list = list()
+  list$output = config$outputFormats
+  list$input = config$inputFormats
+
+
+  return(list)
 
 
 }
@@ -63,23 +70,25 @@
 .conformance = function() {
   config = Session$getConfig()
 
-  list(
-    conformsTo = config$OGC_conformanceLink
-  )
+  list = list()
+  list$conformsTo = list(config$OGC_conformanceLink)
+
+  return(list)
 
 }
 
 .collections = function() {
 
-  data = Session$data
-  list(collections = unname(lapply(data, function(x) {
-   return(x$collectionInfo())
-    })),
-   links = list(
+  collections = list(collections = unname(lapply(Session$data, function(x) {
+    return(x$collectionInfo())
+  })))
+  collections$links = list(list(
      rel = "self",
      href = paste(Session$getConfig()$base_url, "collections", sep = "/")
-   )
-  )
+   ))
+
+  return(collections)
+
 }
 
 .collectionId = function(req, res, collection_id) {
@@ -90,18 +99,16 @@
 
 .processes = function() {
 
-  processes = list(processes=unname(lapply(Session$processes, function(process){
+  processes = list(processes = unname(lapply(Session$processes, function(process){
     return(process$processInfo())
   })))
 
-  links = list(
+  processes$links = list(list(
     rel = "self",
     href = paste(Session$getConfig()$base_url, "processes", sep = "/")
-  )
+  ))
 
-  result = as.vector(c(links =list(links), processes))
-
-  return(result)
+  return(processes)
 
 
 }
@@ -145,7 +152,7 @@ addEndpoint = function() {
                          method = "GET",
                          handler = .collections)
 
-  Session$createEndpoint(path = "/collections/<collection_id>",
+  Session$createEndpoint(path = "/collections/{collection_id}",
                          method = "GET",
                          handler = .collectionId)
 
@@ -153,6 +160,9 @@ addEndpoint = function() {
                          method = "GET",
                          handler = .processes)
 
+  Session$createEndpoint(path = "/jobs",
+                         method = "GET",
+                         handler = .listAllJobs)
+
   Session$assignProcess(load_collection)
-  Session$assignProcess(load_collectionB)
 }
