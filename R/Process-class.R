@@ -10,8 +10,8 @@
 #'
 #' @include Parameter-class.R
 #' @include processes.R
-#'
 #' @importFrom R6 R6Class
+#'
 #' @export
 Process <- R6Class(
   "Process",
@@ -71,11 +71,34 @@ Process <- R6Class(
       )
 
       return(info)
+    },
+
+    #' @description Set parameter for the executable process graph
+    #'
+    #' @param name Name of parameter
+    #' @param value Value to be set
+    #'
+    setParameter = function(name, value) {
+
+      parameter_names = lapply(self$parameters, function(x) {
+        return(x$name)
+      })
+
+      index = match(name, parameter_names)
+      if (is.na(index)) {
+        stop(paste("Unable to find: '",name,"' in process '",self$id,"'",sep=""))
+      }
+
+      self$parameters[[index]]$value = value
+
+      invisible(self)
     }
+
 
   )
 )
 
+#' Check if given process is a process
 #' @export
 is.Process = function(obj) {
   return("Process" %in% class(obj))
