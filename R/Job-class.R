@@ -1,12 +1,13 @@
 #' Job
 #'
-#' @field job_id Id of the job
+#' @field id Id of the job
 #' @field status Current status of the job
-#' @field process_graph Process graph of the job
+#' @field process Process of the job
 #' @field created When the job was created
 #' @field title Title of the job
 #' @field description Shortly description of the planned result
 #' @field results Result of the executed process
+#' @field output Format of the output
 #'
 #' @importFrom R6 R6Class
 #'
@@ -14,64 +15,67 @@
 Job <- R6Class(
   "Job",
   public = list(
-    job_id = NULL,
+    id = NULL,
     status=NA,
-    process_graph = NULL,
+    process = NULL,
     created = NULL,
     title = NULL,
     description = NULL,
     results = NULL,
+    output = NULL,
 
     #' @description Initialize job
     #'
-    #' @param job_id Id of the job
+    #' @param id Id of the job
     #' @param status Current status of the job
-    #' @param process_graph Process graph of the job
+    #' @param process Process of the job
     #' @param created When the job was created
     #' @param title Title of the job
     #' @param description Shortly description of the planned result
     #' @param results Result of the executed process
     #'
-    initialize = function(job_id = NULL, process_graph = NULL) {
-      self$job_id = job_id
+    initialize = function(id = NA, process = NULL) {
+
+      if (is.na(id)) {
+        self$id = ids::random_id(bytes = 6)
+      }
+      else {
+        self$id = id
+      }
       self$created = Sys.time()
       self$status = "created"
 
-      if (!is.null(process_graph)) {
-        if (!is.ProcessGraph(process_graph)) {
-          if (is.graph_id(process_graph)) {
-            proGraph = ProcessGraph$new(process_graph_id=process_graph)
-            proGraph$process_graph_id = NULL # will be created on store
-          }
-          else {
-            proGraph = ProcessGraph$new(process_graph = process_graph)
-          }
+      if (!is.null(process)) {
+        if (!is.ProcessGraph(process)) {
+            proGraph = ProcessGraph$new(process_graph = process)
         }
         else {
-          proGraph$process_graph = process_graph
+          proGraph$process_graph = process
         }
-        self$process_graph = proGraph$buildExecutableProcessGraph(job=self)
+        self$process$process_graph = proGraph$buildExecutableProcessGraph(job=self)
       }
       return(self)
+    },
+
+    #' @description Set the output format
+    #' @param output Format of the output
+    setOutput = function(output) {
+      self$output = output
     },
 
     #' @description Store the job in the Session
     #'
     store = function() {
 
-      if (is.na(self$job_id)) {
-        self$job_id = ids::random_id(bytes = 6)
+      if (is.na(self$process$process_graph$process_graph_id) || is.null(self$process$process_graph$process_graph_id)) {
+        #self$process$process_graph$store()
       }
-      if (is.na(self$process_graph$process_graph_id) || is.null(self$process_graph$process_graph_id)) {
-        self$process_graph$store()
-      }
+      if (is.null(getJobIdIndex(self$id))) {
 
-      if (is.null(getJobIdIndex(self$job_id))) {
-
-        Session$jobs = append(Session$jobs, list(list(job_id = self$job_id,
+        Session$jobs = append(Session$jobs, list(list(id = self$id,
                                                       status = self$status,
                                                       created = self$created,
-                                                      process_graph = self$process_graph,
+                                                      process = self$process,
                                                       title = self$title,
                                                       description = self$description )))
       }
@@ -81,18 +85,18 @@ Job <- R6Class(
     #' @description Load the job properties from the stored jobs
     #'
     load = function() {
-      index = getJobIdIndex(self$job_id)
-
+      index = getJobIdIndex(self$id)
+#browser()
       if (! is.na(index)) {
-        storedJob = Session$job[[index]]
+        storedJob = Session$jobs[[index]]
 
         self$status = storedJob$status
         self$created = storedJob$created
         self$title = storedJob$title
         self$description = storedJob$description
 
-        proGraph = ProcessGraph$new(process_graph_id = storedJob$process_graph)
-        self$process_graph = proGraph$buildExecutableProcessGraph(job = self)
+        proGraph = ProcessGraph$new(process_graph = storedJob$process)
+        self$process = proGraph$buildExecutableProcessGraph(job = self)
 
         invisible(self)
       }
@@ -100,12 +104,12 @@ Job <- R6Class(
 
     #' @description Execute the executable process graph and store it in the results of the job
     #'
-    #' @return The job
+    #' @return The executed job
     run = function() {
-
+#browser()
       tryCatch({
         self$status = "running"
-        self$results = self$process_graph$execute()
+        self$results = self$process$process_graph$execute()
         self$status = "finished"
       },
         error=function (e) {
@@ -124,10 +128,10 @@ Job <- R6Class(
     jobInfo = function() {
 
       info = list(
-        job_id = self$job_id,
+        id = self$id,
         title = self$title,
         description = self$description,
-        process_graph = self$process_graph,
+        process = list(process_graph = self$process$process_graph$processInfo()),
         status = self$status,
         created = self$created
       )
@@ -135,7 +139,16 @@ Job <- R6Class(
       return(info)
     }
 
-  )
+  ),
+
+#' @field output.folder Set a new output folder
+active = list(
+  output.folder = function() {
+    return(paste(Session$config$workspace.path, "jobs", self$id,sep="/"))
+  }
+)
+
+
 
 )
 
@@ -146,8 +159,23 @@ Job <- R6Class(
 #' @export
 getJobIdIndex = function(jid) {
   ids = lapply(Session$jobs, function(x) {
-    return(x$job_id)
+    return(x$id)
   })
   index = match(jid, ids)
   return(index)
+}
+
+#exists.Job = function(id) {
+#  id = getJobIdIndex(id)
+#  if (nchar(id) == 12 && ! is.null(id)) {
+#    return(result)
+#  } else {
+#    return(FALSE)
+#  }
+#}
+
+#' Check if given job is a job
+#' @export
+is.Job = function(obj) {
+  return("Job" %in% class(obj))
 }

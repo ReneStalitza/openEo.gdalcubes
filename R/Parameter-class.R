@@ -4,6 +4,7 @@
 #' @field description Short description of the parameter
 #' @field schema Type and subtype of the parameter
 #' @field optional Is this parameter required for the process
+#' @field value Value of the parameter
 #'
 #' @include Process-class.R
 #' @importFrom R6 R6Class
@@ -16,6 +17,7 @@ Parameter <- R6Class(
     description = NA,
     schema = NA,
     optional = NA,
+    value = NULL,
 
     #' @description
     #'
@@ -29,10 +31,11 @@ Parameter <- R6Class(
                           description = NA,
                           type = NA,
                           subtype = NA,
-                          optional = NA) {
+                          optional = FALSE) {
 
       self$name = name
       self$description = description
+      self$optional = optional
       self$schema = schema_format(type, subtype)
     },
 

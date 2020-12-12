@@ -2,12 +2,14 @@
 #'
 #' @include Process-class.R
 #' @importFrom R6 R6Class
+#' @field job Attached job to the process
 #'
 #' @export
 ExecutableProcess <- R6Class(
   "ExecutableProcess",
   inherit = Process,
   public = list(
+    job = NULL,
 
     #' @description Initialize executable process
     #'
@@ -17,25 +19,29 @@ ExecutableProcess <- R6Class(
     #' @param operation Function that executes the process
     #' @param process Processes which will be executed
     #'
-    initialize= function(id = NA,
+    initialize = function(id = NA,
                         description = NA,
                         parameters = NA,
                         operation = NA,
                         process= NULL) {
 
-          if (is.null(process)) {}
+          if (! is.null(process)) {
 
-          else {
             variables = names(process)
             for (key in variables) {
               value = process[[key]]
-              if (class(value) == "function" || class(value) == "environment") { #?
+              if (class(value) == "function" || class(value) == "environment") {
                 next()
               } else {
                 self[[key]] = value
               }
             }
+            self$operation = process$operation
           }
+          else {
+            stop("No process provided")
+          }
+
     },
 
     #' @description Run the operation including a generated list of parameters

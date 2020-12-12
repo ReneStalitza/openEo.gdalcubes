@@ -18,6 +18,8 @@ Parameter
 \item{\code{schema}}{Type and subtype of the parameter}
 
 \item{\code{optional}}{Is this parameter required for the process}
+
+\item{\code{value}}{Value of the parameter}
 }
 \if{html}{\out{</div>}}
 }
@@ -40,7 +42,7 @@ Parameter
   description = NA,
   type = NA,
   subtype = NA,
-  optional = NA
+  optional = FALSE
 )}\if{html}{\out{</div>}}
 }
 

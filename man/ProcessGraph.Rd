@@ -14,6 +14,10 @@ Process graph
 \item{\code{process_graph_id}}{Id of the process graph}
 
 \item{\code{process_graph}}{Attached process graph}
+
+\item{\code{title}}{Title of the corresponding job}
+
+\item{\code{description}}{Description fo the corresponding job}
 }
 \if{html}{\out{</div>}}
 }
@@ -33,7 +37,12 @@ Process graph
 \subsection{Method \code{new()}}{
 Initialize process graph
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ProcessGraph$new(process_graph_id = NA, process_graph = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{ProcessGraph$new(
+  process_graph_id = NA,
+  process_graph = NULL,
+  title = NA,
+  description = NA
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -42,6 +51,10 @@ Initialize process graph
 \item{\code{process_graph_id}}{Id of the process graph}
 
 \item{\code{process_graph}}{Attached process graph}
+
+\item{\code{title}}{Title of process graph}
+
+\item{\code{description}}{Description of the process graph}
 }
 \if{html}{\out{</div>}}
 }

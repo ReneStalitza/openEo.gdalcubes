@@ -22,6 +22,9 @@ SessionConfig = function() {
     data.path = NULL,
     workspace.path = NULL,
 
+    user = "user",
+    password = "password",
+
     api.port = api.port,
     host = host,
     base_url = paste("http://",host, ":", api.port,  sep = ""),
@@ -30,13 +33,7 @@ SessionConfig = function() {
       GTiff = list(
         title = "GeoTiff",
         description = "Export to GeoTiff",
-        gis_data_types = list("raster"),
-        parameters = list(
-          compress = list(
-            type = "integer",
-            description = "Compression level"
-            )
-          )
+        gis_data_types = list("raster")
       ),
       NetCDF = list(
         title = "Network Common Data Form",

@@ -9,6 +9,7 @@
 #' @importFrom R6 R6Class
 #' @importFrom tibble add_row
 #' @import plumber
+#' @import gdalcubes
 #' @export
 SessionInstance <- R6Class(
   "SessionInstance",
@@ -25,6 +26,7 @@ SessionInstance <- R6Class(
       self$graphs = list()
       self$processes = list()
       self$data = list()
+      self$jobs = list()
 
       private$config = SessionConfig()
 
@@ -40,10 +42,22 @@ SessionInstance <- R6Class(
     },
 
     #' @description Get configuration
-    #'
     #' @return configuration
     getConfig = function() {
       return(private$config)
+    },
+
+    #' @description Get token
+    #' @return token
+    getToken = function() {
+      return(private$token)
+    },
+
+    #' @description Assign this token to the session
+    #' @param new New token
+    setToken = function(new) {
+      private$token = NULL
+      private$token = new
     },
 
     #' @description Start the session
@@ -87,17 +101,24 @@ SessionInstance <- R6Class(
     #' @param path path for the endpoint
     #' @param method type of request
     #' @param handler function to be executed
+    #' @param serializer plumber serializer to be used
+    #' @param filter deactivate filter for several endpoints
     #'
     #' @return created Endpoint
     #'
-    createEndpoint = function(path, method, handler=NULL) {
+    createEndpoint = function(path, method, handler = NULL, filter = FALSE, serializer = serializer_unboxed_json()) {
 
       private$endpoints = private$endpoints %>% add_row(path=path,method=method)
-
       replPath = path %>% gsub(pattern="\\{",replacement="<") %>% gsub(pattern="\\}",replacement=">")
-      private$router$handle(path = replPath, method = method, handler = handler)
-      private$router$handle(path = replPath, methods = "OPTIONS", handler = .cors_option)
 
+      if (filter == TRUE) {
+        private$router$handle(path = replPath, method = method, handler = handler, serializer = serializer)
+      }
+      else {
+        private$router$handle(path = replPath,preempt = "authorization", method = method, handler = handler, serializer = serializer)
+      }
+
+      private$router$handle(path = replPath, methods = "OPTIONS", handler = .cors_option)
     },
 
     #' @description Function to assign data of collection to the data path
@@ -111,12 +132,9 @@ SessionInstance <- R6Class(
       }
 
       if(! is.Collection(col)) {
-        stop("Assigned data is not a collection")
+        stop("Delivered data is not a collection")
       }
 
-      if (is.null(self$data)) {
-        self$data = list()
-      }
       newCol = list(col)
       names(newCol) = col$id
       self$data = append(self$data, newCol)
@@ -134,17 +152,64 @@ SessionInstance <- R6Class(
       }
 
       if(! is.Process(pro)) {
-        stop("Assigned process is not a process")
+        stop("Delivered process is not a process")
       }
 
-      if (is.null(self$process)) {
-        self$data = list()
-      }
       newPro = list(pro)
       names(newPro) = pro$id
       self$processes = append(self$processes, newPro)
 
+    },
+
+    #' @description Function to assign a job to the Session
+    #'
+    #' @param job Job of class 'Job'
+    #'
+    assignJob = function(job) {
+
+      if (job$id %in% names(Session$jobs)) {
+        stop("This job is already assigned")
+      }
+
+      if(! is.Job(job)) {
+        stop("Delivered job is not a job")
+      }
+
+      newJob = list(job)
+      names(newJob) = job$id
+      self$jobs = append(self$jobs, newJob)
+
+    },
+
+    #' @description Execute the job
+    #'
+    #' @param job Job to be executed
+    #'
+    runJob = function(job) {
+
+      if (!dir.exists(job$output.folder)) {
+              dir.create(job$output.folder,recursive = TRUE)
+      }
+      dir = paste(Session$getConfig()$workspace.path, job$output.folder, sep = "/")
+#      tryCatch({
+#
+        job = job$run()
+        format = job$output
+
+        gdalcubes_options(threads = 8)
+        #gdalcubes_options(ncdf_compression_level = 1)
+
+        if (format == "NetCDF") {
+          write_ncdf(job$results, file.path(dir, basename(tempfile(fileext = ".nc"))))
+        }
+        if (format == "GTiff") {
+          write_tif(job$results, dir = dir)
+        }
+
+#      })
     }
+
+
   ),
 
   private = list(
@@ -152,12 +217,14 @@ SessionInstance <- R6Class(
     endpoints = NULL,
     router = NULL,
     config = NULL,
+    token = NULL,
 
-    initRouter = function(){
+    initRouter = function() {
 
       private$router = Router$new()
-
       private$router$registerHook("postroute",.cors_filter)
+      private$router$filter("authorization", .authorized, serializer = serializer_unboxed_json())
+
     }
 
   )

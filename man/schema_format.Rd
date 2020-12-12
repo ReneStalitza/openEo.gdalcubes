@@ -2,7 +2,7 @@
 % Please edit documentation in R/processes.R
 \name{schema_format}
 \alias{schema_format}
-\title{processes.R}
+\title{schema_format}
 \usage{
 schema_format(type, subtype = NULL)
 }

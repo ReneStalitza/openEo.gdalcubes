@@ -2,6 +2,8 @@
 #'
 #' @field process_graph_id Id of the process graph
 #' @field process_graph Attached process graph
+#' @field title Title of the corresponding job
+#' @field description Description fo the corresponding job
 #'
 #' @importFrom R6 R6Class
 #' @export
@@ -10,13 +12,17 @@ ProcessGraph <- R6Class(
   public = list(
     process_graph_id = NA,
     process_graph = NA,
+    title = NA,
+    description = NA,
 
     #' @description Initialize process graph
     #'
     #' @param process_graph_id Id of the process graph
     #' @param process_graph Attached process graph
+    #' @param title Title of process graph
+    #' @param description Description of the process graph
     #'
-    initialize = function (process_graph_id = NA, process_graph = NULL) {
+    initialize = function (process_graph_id = NA, process_graph = NULL, title = NA, description = NA) {
 
       if (!is.na(process_graph_id)) {
         if (is.na (getPgidIndex(self$process_graph_id))) {
@@ -36,6 +42,12 @@ ProcessGraph <- R6Class(
         else {
           stop("Invalid process graph")
         }
+      }
+      if (!is.na(title)) {
+        self$title = title
+      }
+      if (!is.na(description)) {
+        self$description = description
       }
 
     },
@@ -62,7 +74,9 @@ ProcessGraph <- R6Class(
       if (!is.null(self$process_graph)) {
 
         Session$graphs = append(Session$graphs, list(list(process_graph_id = self$process_graph_id,
-                                                          process_graph = self$process_graph )))
+                                                          process_graph = self$process_graph,
+                                                          title = self$title,
+                                                          description = self$description )))
       }
     },
 
@@ -83,46 +97,58 @@ ProcessGraph <- R6Class(
       #' param graph_list Graph to load the corresponding process
       #' param job Attach the job to the process
       #'
-      loadProcess = function(graph_list, job) {
-        processId = graph_list[["id"]]
-        graph_list[["id"]] = NULL
-        graph_list[["description"]] = NULL
+      loadProcess = function(graph, job) {
 
-        if (!is.null(processId) && processId %in% names(Session$processes)) {
-          process = Session$processes[[processId]]
+        loadNode = function(graph, node, job) {
 
-        if (is.null(process) && ! is.Process(process)) {
-          stop("Defined process is null or not a process")
-        }
+          graph_list = graph$process_graph[[node]]
+          processId = graph_list[["process_id"]]
+          graph_list[["process_id"]] = NULL
+      #    graph_list[["result"]] = NULL
+      #    graph_list[["job"]] = NULL
 
-        params = graph_list
 
-        executable = process$clone(deep=TRUE)
+          if (!is.null(processId) && processId %in% names(Session$processes)) {
+            process = Session$processes[[processId]]
 
-        clonedParameters = list()
-        for (par in process$parameters) {
-          clonedParameters=append(clonedParameters,par$clone(deep=TRUE))
-        }
-        executable$parameters = clonedParameters
+          if (is.null(process) && ! is.Process(process)) {
+            stop("Defined process is null or not a process")
+          }
 
-        for (key in names(params)) {
-          value = params[[key]]
+          params = graph_list$arguments
 
-          if (class(value) == "list" && "process_id" %in% names(value)) {
-            executable$setParameter(key, private$loadProcess(value, job))
+          executable = process$clone(deep=TRUE)
+
+          clonedParameters = list()
+          for (par in process$parameters) {
+            clonedParameters=append(clonedParameters,par$clone(deep=TRUE))
+          }
+          executable$parameters = clonedParameters
+
+
+          for (key in names(params)) {
+            value = params[[key]]
+
+            if (class(value) == "list" && "from_node" %in% names(value)) {
+              executable$setParameter(key, loadNode(graph, value$from_node, job))
+            }
+            else {
+              executable$setParameter(key, value)
+            }
+          }
+
+          result = ExecutableProcess$new(process=executable)
+          result$job = job
+          return(result)
           }
           else {
-            executable$setParameter(key, value)
+          stop(paste("Cannot load process",processId))
           }
         }
 
-        result = ExecutableProcess$new(process=executable)
-        result$job = job
-        return(result)
-        }
-        else {
-        stop(paste("Cannot load process",processId))
-        }
+        node = names(graph$process_graph[length(graph$process_graph)])
+        loadNode(graph, node, job)
+
       }
 
 
@@ -130,14 +156,16 @@ ProcessGraph <- R6Class(
 )
 #' Check if process graph
 #' @param obj process graph to be checked
+#' @export
 is.ProcessGraph = function(obj) {
   return("ProcessGraph" %in% class(obj))
 }
 
 #' Check if graph id
 #' @param obj id to be checked
+#' @export
 is.graphId = function(obj) {
-  if (nchar(graph_id) == 16) {
+  if (nchar(obj) == 16) {
     return(TRUE)
   }
   else {

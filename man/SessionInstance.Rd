@@ -27,12 +27,16 @@ Session class
 \item \href{#method-new}{\code{SessionInstance$new()}}
 \item \href{#method-getEndpoints}{\code{SessionInstance$getEndpoints()}}
 \item \href{#method-getConfig}{\code{SessionInstance$getConfig()}}
+\item \href{#method-getToken}{\code{SessionInstance$getToken()}}
+\item \href{#method-setToken}{\code{SessionInstance$setToken()}}
 \item \href{#method-startSession}{\code{SessionInstance$startSession()}}
 \item \href{#method-initDirectory}{\code{SessionInstance$initDirectory()}}
 \item \href{#method-initEndpoints}{\code{SessionInstance$initEndpoints()}}
 \item \href{#method-createEndpoint}{\code{SessionInstance$createEndpoint()}}
 \item \href{#method-assignData}{\code{SessionInstance$assignData()}}
 \item \href{#method-assignProcess}{\code{SessionInstance$assignProcess()}}
+\item \href{#method-assignJob}{\code{SessionInstance$assignJob()}}
+\item \href{#method-runJob}{\code{SessionInstance$runJob()}}
 \item \href{#method-clone}{\code{SessionInstance$clone()}}
 }
 }
@@ -73,6 +77,36 @@ configuration
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getToken"></a>}}
+\if{latex}{\out{\hypertarget{method-getToken}{}}}
+\subsection{Method \code{getToken()}}{
+Get token
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{SessionInstance$getToken()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+token
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setToken"></a>}}
+\if{latex}{\out{\hypertarget{method-setToken}{}}}
+\subsection{Method \code{setToken()}}{
+Assign this token to the session
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{SessionInstance$setToken(new)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{new}}{New token}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-startSession"></a>}}
 \if{latex}{\out{\hypertarget{method-startSession}{}}}
 \subsection{Method \code{startSession()}}{
@@ -108,7 +142,13 @@ biuld a df to add the endpoints later on
 \subsection{Method \code{createEndpoint()}}{
 Create an endpoint
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{SessionInstance$createEndpoint(path, method, handler = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{SessionInstance$createEndpoint(
+  path,
+  method,
+  handler = NULL,
+  filter = FALSE,
+  serializer = serializer_unboxed_json()
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -119,6 +159,10 @@ Create an endpoint
 \item{\code{method}}{type of request}
 
 \item{\code{handler}}{function to be executed}
+
+\item{\code{filter}}{deactivate filter for several endpoints}
+
+\item{\code{serializer}}{plumber serializer to be used}
 }
 \if{html}{\out{</div>}}
 }
@@ -156,6 +200,40 @@ Function to assign the process to the Session
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{pro}}{Process of class 'Process'}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-assignJob"></a>}}
+\if{latex}{\out{\hypertarget{method-assignJob}{}}}
+\subsection{Method \code{assignJob()}}{
+Function to assign a job to the Session
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{SessionInstance$assignJob(job)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{job}}{Job of class 'Job'}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-runJob"></a>}}
+\if{latex}{\out{\hypertarget{method-runJob}{}}}
+\subsection{Method \code{runJob()}}{
+Execute the job
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{SessionInstance$runJob(job)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{job}}{Job to be executed}
 }
 \if{html}{\out{</div>}}
 }

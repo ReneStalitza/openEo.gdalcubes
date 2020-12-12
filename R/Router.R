@@ -15,14 +15,9 @@ Router = R6Class(
         private$envir <- envir
       }
 
-      self$setSerializer(serializer_unboxed_json())
-
       private$errorHandler <- plumber:::defaultErrorHandler()
       private$notFoundHandler <- plumber:::default404Handler
 
     }
-  ),
-
-  private = list()
-
+  )
 )

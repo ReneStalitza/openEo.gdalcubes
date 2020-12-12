@@ -11,6 +11,13 @@ Executable process
 \section{Super class}{
 \code{\link[openEo.gdalcubes:Process]{openEo.gdalcubes::Process}} -> \code{ExecutableProcess}
 }
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{job}}{Attached job to the process}
+}
+\if{html}{\out{</div>}}
+}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{

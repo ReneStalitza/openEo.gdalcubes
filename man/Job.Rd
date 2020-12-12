@@ -11,11 +11,11 @@ Job
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{job_id}}{Id of the job}
+\item{\code{id}}{Id of the job}
 
 \item{\code{status}}{Current status of the job}
 
-\item{\code{process_graph}}{Process graph of the job}
+\item{\code{process}}{Process of the job}
 
 \item{\code{created}}{When the job was created}
 
@@ -24,6 +24,15 @@ Job
 \item{\code{description}}{Shortly description of the planned result}
 
 \item{\code{results}}{Result of the executed process}
+
+\item{\code{output}}{Format of the output}
+}
+\if{html}{\out{</div>}}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{output.folder}}{Set a new output folder}
 }
 \if{html}{\out{</div>}}
 }
@@ -31,6 +40,7 @@ Job
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-new}{\code{Job$new()}}
+\item \href{#method-setOutput}{\code{Job$setOutput()}}
 \item \href{#method-store}{\code{Job$store()}}
 \item \href{#method-load}{\code{Job$load()}}
 \item \href{#method-run}{\code{Job$run()}}
@@ -44,15 +54,15 @@ Job
 \subsection{Method \code{new()}}{
 Initialize job
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Job$new(job_id = NULL, process_graph = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Job$new(id = NA, process = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{job_id}}{Id of the job}
+\item{\code{id}}{Id of the job}
 
-\item{\code{process_graph}}{Process graph of the job}
+\item{\code{process}}{Process of the job}
 
 \item{\code{status}}{Current status of the job}
 
@@ -63,6 +73,23 @@ Initialize job
 \item{\code{description}}{Shortly description of the planned result}
 
 \item{\code{results}}{Result of the executed process}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setOutput"></a>}}
+\if{latex}{\out{\hypertarget{method-setOutput}{}}}
+\subsection{Method \code{setOutput()}}{
+Set the output format
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Job$setOutput(output)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{output}}{Format of the output}
 }
 \if{html}{\out{</div>}}
 }
@@ -97,7 +124,7 @@ Execute the executable process graph and store it in the results of the job
 }
 
 \subsection{Returns}{
-The job
+The executed job
 }
 }
 \if{html}{\out{<hr>}}
