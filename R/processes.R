@@ -87,7 +87,7 @@ load_collection = Process$new(
 
   ),
   returns = eo_datacube,
-  operation = function(id, spatial_extent, temporal_extent, bands) {
+  operation = function(id, spatial_extent, temporal_extent, bands = NULL) {
 
     ic = Session$data[[id]]$getCollection()
 
@@ -124,14 +124,11 @@ load_collection = Process$new(
                              t0 = temporal_extent[[1]], t1 = temporal_extent[[2]])
       }
     }
-
+#browser()
     view = cube_view(srs = crs, extent = extent,
                      dx=500, dy=500, dt = "P1Y", resampling="average", aggregation="median")
 
-
     cube = raster_cube(ic, view)
-
-    cube = select_bands(cube, c("B02", "B03", "B04"))
 
     if(! is.null(bands)) {
       cube = select_bands(cube, bands)
@@ -175,5 +172,81 @@ save_result = Process$new(
     parent.frame()$job$setOutput(format)
 
     return(data)
+  }
+)
+
+#' filter bands
+filter_bands = Process$new(
+  id = "filter_bands",
+  description = "Filters the bands in the data cube so that bands that don't match any of the criteria are dropped from the data cube.",
+  categories = list("cubes", "filter"),
+  summary = "Filter the bands by name",
+  parameters = list(
+    Parameter$new(
+      name = "data",
+      description = "A data cube with bands.",
+      type = "object",
+      subtype = "raster-cube"
+    ),
+    Parameter$new(
+      name = "bands",
+      description = "A list of band names.",
+      type = "array"
+    )
+  ),
+  returns = eo_datacube,
+  operation = function(data, bands) {
+
+    if(! is.null(bands)) {
+      cube = select_bands(data, bands)
+    }
+    return(cube)
+  }
+)
+
+#' filter bbox
+filter_bbox = Process$new(
+  id = "filter_bbox",
+  description = "The filter retains a pixel in the data cube if the point at the pixel center intersects with the bounding box (as defined in the Simple Features standard by the OGC).",
+  categories = list("cubes", "filter"),
+  summary = "Limits the data cube to the specified bounding box.",
+  parameters = list(
+    Parameter$new(
+      name = "data",
+      description = "A data cube.",
+      type = "object",
+      subtype = "raster-cube"
+    ),
+    Parameter$new(
+      name = "extent",
+      description = "A bounding box, which may include a vertical axis (see base and height).",
+      type = "object",
+      subtype = "bounding-box"
+    )
+  ),
+  returns = eo_datacube,
+  operation = function(data, extent) {
+
+    if (! is.null(extent$crs)) {
+      crsString = toString(extent$crs)
+    }
+    else {
+      crsString = "3857"
+    }
+
+    crs = paste("EPSG", crsString, sep = ":")
+
+    extent = changeProjection(extent)
+    nw = c(extent$west, extent$north)
+    sw = c(extent$west, extent$south)
+    se = c(extent$east, extent$south)
+    ne = c(extent$east, extent$north)
+
+    p = list(rbind(nw, sw, se, ne, nw))
+    pol = sf::st_polygon(p)
+
+    cube = filter_geom(data, pol, srs = crs)
+
+    return(cube)
   }
 )

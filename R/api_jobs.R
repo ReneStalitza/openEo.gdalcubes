@@ -88,7 +88,7 @@
 
       job_results = paste(config$workspace.path,"jobs",job_id,sep="/")
       base = paste0(config$base_url,"/","result/",job_id)
-      links = paste(base,list.files(job_results),sep="/")
+      links = paste("file:/",job_results,list.files(job_results),sep="/")
       files = list.files(job_results)
 
       assets = list()
@@ -98,7 +98,7 @@
         names(apList) = files[i]
         assets = append(assets, apList)
       }
-      
+
       return(list(
         title = job$title,
         description = job$description,

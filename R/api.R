@@ -147,6 +147,42 @@ NULL
   }
 }
 
+.executeSynchronous = function(req, res) {
+
+  sent_job = jsonlite::fromJSON(req$rook.input$read_lines(),simplifyDataFrame = FALSE)
+  process_graph = sent_job$process
+  job = Job$new(process = process_graph)
+
+  job = job$run()
+  format = job$output
+  gdalcubes_options(threads = 8)
+
+  if (! is.null(job$results)) {
+    if (format == "NetCDF") {
+      file = write_ncdf(job$results)
+      file.ext = ".nc"
+    }
+    if (format == "GTiff") {
+      file = write_tif(job$results)
+      file.ext = ".tif"
+    }
+    first = file[1]
+    res$status = 200
+    res$body = readBin(first, "raw", n = file.info(first)$size)
+    #browser()
+    res$setHeader("Content-Type", "image/tiff")
+    #res$setHeader("Content-Type", paste("application/x-gdal-",format,sep=""))
+    #res$setHeader("Content-Disposition", paste("attachment; filename=","\"output",file.ext,"\"",sep=""))
+
+    return(res)
+  }
+  else {
+    res$status = 404
+    list(error = "Execution failed")
+  }
+
+}
+
 .cors_filter = function(req,res) {
   res$setHeader("Access-Control-Allow-Origin", req$HTTP_ORIGIN)
   res$setHeader("Access-Control-Expose-Headers", "Location, OpenEO-Identifier, OpenEO-Costs")
@@ -223,8 +259,17 @@ addEndpoint = function() {
                          method = "GET",
                          handler = .login_basic)
 
+  Session$createEndpoint(path = "/result",
+                         method = "POST",
+                         handler = .executeSynchronous,
+                         filter = TRUE)
+
+  
+
 
 
   Session$assignProcess(load_collection)
   Session$assignProcess(save_result)
+  Session$assignProcess(filter_bands)
+  Session$assignProcess(filter_bbox)
 }
