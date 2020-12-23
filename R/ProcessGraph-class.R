@@ -99,58 +99,72 @@ ProcessGraph <- R6Class(
       #'
       loadProcess = function(graph, job) {
 
-        loadNode = function(graph, node, job) {
+        node = names(graph$process_graph[length(graph$process_graph)])
+        return(private$loadNode(graph, node, job))
+      },
 
-          graph_list = graph$process_graph[[node]]
-          processId = graph_list[["process_id"]]
-          graph_list[["process_id"]] = NULL
-      #    graph_list[["result"]] = NULL
-      #    graph_list[["job"]] = NULL
+      loadNode = function(graph, node, job) {
+        graph_list = graph$process_graph[[node]]
+        processId = graph_list[["process_id"]]
+        graph_list[["process_id"]] = NULL
 
+        if (!is.null(processId) && processId %in% names(Session$processes)) {
+          process = Session$processes[[processId]]
 
-          if (!is.null(processId) && processId %in% names(Session$processes)) {
-            process = Session$processes[[processId]]
+        if (is.null(process) && ! is.Process(process)) {
+          stop("Defined process is null or not a process")
+        }
 
-          if (is.null(process) && ! is.Process(process)) {
-            stop("Defined process is null or not a process")
+        params = graph_list$arguments
+
+        executable = process$clone(deep=TRUE)
+
+        clonedParameters = list()
+        for (par in process$parameters) {
+          clonedParameters=append(clonedParameters,par$clone(deep=TRUE))
+        }
+        executable$parameters = clonedParameters
+#browser()
+
+        for (key in names(params)) {
+          value = params[[key]]
+
+          if (class(value) == "list" && "from_node" %in% names(value)) {
+            executable$setParameter(key, private$loadNode(graph, value$from_node, job))
           }
-
-          params = graph_list$arguments
-
-          executable = process$clone(deep=TRUE)
-
-          clonedParameters = list()
-          for (par in process$parameters) {
-            clonedParameters=append(clonedParameters,par$clone(deep=TRUE))
+          else if (class(value) == "list" && "process_graph" %in% names(value)) {
+            executable$setParameter(key, private$loadProcess(value, job))
           }
-          executable$parameters = clonedParameters
+          else if (class(value) == "list" && !is.null(length(value)) && is.null(names(value))) {
 
-
-          for (key in names(params)) {
-            value = params[[key]]
-
-            if (class(value) == "list" && "from_node" %in% names(value)) {
-              executable$setParameter(key, loadNode(graph, value$from_node, job))
+            for (val in value) {
+              if (class(val) == "list" && "from_node" %in% names(val)) {
+                executable$setParameter(key, private$loadNode(graph, val$from_node, job))
+              }
+             # else if (class(val) == "list" && "from_parameter" %in% names(val)) {
+            #    parent = parent.frame(2)
+            #    executable$setParameter(key, parent$executable$parameters[[1]]$value)
+             # }
+              else {
+                executable$setParameter(key, val)
+              }
             }
-            else {
-              executable$setParameter(key, value)
-            }
-          }
-
-          result = ExecutableProcess$new(process=executable)
-          result$job = job
-          return(result)
           }
           else {
-          stop(paste("Cannot load process",processId))
+            executable$setParameter(key, value)
           }
         }
 
-        node = names(graph$process_graph[length(graph$process_graph)])
-        loadNode(graph, node, job)
+        result = ExecutableProcess$new(process=executable)
+        result$job = job
+        return(result)
+        }
+        else {
+        stop(paste("Cannot load process",processId))
+        }
+
 
       }
-
 
   )
 )

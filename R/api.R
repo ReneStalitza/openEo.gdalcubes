@@ -1,8 +1,10 @@
 #' @import dplyr
 #' @include Session-Class.R
 #' @include Router.R
+#' @include math-processes.R
 #' @include processes.R
 #' @include api_jobs.R
+#' @include api_process_graphs.R
 NULL
 
 # Capabilities handler
@@ -234,6 +236,10 @@ addEndpoint = function() {
                          method = "POST",
                          handler = .createProcessGraph)
 
+  Session$createEndpoint(path = "/process_graphs",
+                         method = "GET",
+                         handler = .listUserProcesses)
+
   Session$createEndpoint(path = "/jobs",
                          method = "GET",
                          handler = .listAllJobs)
@@ -264,12 +270,28 @@ addEndpoint = function() {
                          handler = .executeSynchronous,
                          filter = TRUE)
 
-  
 
 
 
+  Session$assignProcess(array_element)
   Session$assignProcess(load_collection)
   Session$assignProcess(save_result)
   Session$assignProcess(filter_bands)
   Session$assignProcess(filter_bbox)
+  Session$assignProcess(reduce_dimension)
+  Session$assignProcess(min)
+  Session$assignProcess(max)
+  Session$assignProcess(median)
+  Session$assignProcess(mean)
+  Session$assignProcess(add)
+  Session$assignProcess(subtract)
+  Session$assignProcess(multiply)
+  Session$assignProcess(divide)
+  Session$assignProcess(sum)
+  #Session$assignProcess(array_element)
+
+
+
+
+
 }

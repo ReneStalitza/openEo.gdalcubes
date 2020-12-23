@@ -106,12 +106,12 @@ Job <- R6Class(
     #'
     #' @return The executed job
     run = function() {
-#browser()
+
       tryCatch({
         self$status = "running"
         self$results = self$process$process_graph$execute()
         self$status = "finished"
-      },
+     },
         error=function (e) {
         self$status = "error"
         self$results = NULL

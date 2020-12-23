@@ -26,13 +26,15 @@ ExecutableProcess <- R6Class(
                         process= NULL) {
 
           if (! is.null(process)) {
-
+  
             variables = names(process)
             for (key in variables) {
               value = process[[key]]
               if (class(value) == "function" || class(value) == "environment") {
                 next()
-              } else {
+              }
+              else {
+               # if(key == "parameters")
                 self[[key]] = value
               }
             }
@@ -55,11 +57,17 @@ ExecutableProcess <- R6Class(
 
           if (is.ExecutableProcess(value)) {
             parameterList[[name]] = value$execute()
-          } else {
+          }
+          else if (class(value) == "list" && "from_parameter" %in% names(value)) {
+            par = parent.frame()$parameterList
+            parameterList[[name]] = par
+          }
+          else {
             parameterList[[name]] = value
           }
 
         }
+
         result = do.call(self$operation, parameterList, envir = self)
 
         return(result)

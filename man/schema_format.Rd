@@ -4,7 +4,7 @@
 \alias{schema_format}
 \title{schema_format}
 \usage{
-schema_format(type, subtype = NULL)
+schema_format(type, subtype = NULL, items = NULL)
 }
 \arguments{
 \item{type}{data type}

@@ -20,10 +20,12 @@ Imports:
     dplyr,
     gdalcubes
 Collate: 
+    'api_process_graphs.R'
     'api_jobs.R'
     'Parameter-class.R'
     'Process-class.R'
     'processes.R'
+    'math-processes.R'
     'Router.R'
     'api.R'
     'Session-Class.R'

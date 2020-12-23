@@ -5,6 +5,7 @@
 #' @field schema Type and subtype of the parameter
 #' @field optional Is this parameter required for the process
 #' @field value Value of the parameter
+#' @field parameters Included parameters
 #'
 #' @include Process-class.R
 #' @importFrom R6 R6Class
@@ -18,25 +19,25 @@ Parameter <- R6Class(
     schema = NA,
     optional = NA,
     value = NULL,
+    parameters = NULL,
 
     #' @description
     #'
     #' @param name Name of the parameter
     #' @param description Short description of the parameter
-    #' @param type Type of the parameter
-    #' @param subtype More specific type of the parameter
     #' @param optional Is this parameter required for the process
+    #' @param schema Type and subtype of the parameter
     #'
     initialize = function(name = NA,
                           description = NA,
-                          type = NA,
-                          subtype = NA,
+                          schema = NA,
                           optional = FALSE) {
 
       self$name = name
       self$description = description
+      self$schema = schema
       self$optional = optional
-      self$schema = schema_format(type, subtype)
+
     },
 
 
@@ -46,11 +47,27 @@ Parameter <- R6Class(
     #'
     parameterInfo = function() {
       info = list()
+
+      if ("parameters" %in% names(self$schema)) {
+        schema = list()
+        schema$type = self$schema$type
+        schema$subtype = self$schema$subtype
+
+
+        schema$parameters = lapply(self$schema$parameters, function(x) {
+          return(x$parameterInfo())
+        })
+      }
+      else {
+        schema = self$schema
+      }
+
       info = appendInfo(
         name = self$name,
         description = self$description,
-        schema = self$schema
-        )
+        schema = schema,
+        optional = self$optional
+      )
 
 
       return(info)

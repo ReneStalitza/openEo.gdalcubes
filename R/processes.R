@@ -10,12 +10,15 @@ NULL
 #'
 #' @return list with type and subtype(optional)
 #' @export
-schema_format = function(type, subtype = NULL) {
+schema_format = function(type, subtype = NULL, items = NULL) {
   schema = list()
   schema = append(schema,list(type=type))
 
   if (!is.null(subtype) && !is.na(subtype)) {
     schema = append(schema, list(subtype = subtype))
+  }
+  if (!is.null(items) && !is.na(items)) {
+    schema = append(schema, list(items = items))
   }
   return(schema)
 }
@@ -27,7 +30,7 @@ schema_format = function(type, subtype = NULL) {
 datacube_schema = function() {
   info = list(
     description = "A data cube for further processing",
-    schema = schema_format(type = "object", subtype = "raster-cube")
+    schema = list(type = "object", subtype = "raster-cube")
   )
   return(info)
 }
@@ -63,25 +66,29 @@ load_collection = Process$new(
     Parameter$new(
       name = "id",
       description = "The collection id",
-      type = "string",
-      subtype = "collection-id"
+      schema = list(
+        type = "string",
+        subtype = "collection-id")
     ),
     Parameter$new(
       name = "spatial_extent",
       description = "Limits the data to load from the collection to the specified bounding box",
-      type = "object",
-      subtype = "bounding-box"
+      schema = list(
+        type = "object",
+        subtype = "bounding-box")
     ),
     Parameter$new(
       name = "temporal_extent",
       description = "Limits the data to load from the collection to the specified left-closed temporal interval.",
-      type = "array",
-      subtype = "temporal-interval"
+      schema = list(
+        type = "array",
+        subtype = "temporal-interval")
     ),
     Parameter$new(
       name = "bands",
       description = "Only adds the specified bands into the data cube so that bands that don't match the list of band names are not available.",
-      type = "array",
+      schema = list(
+        type = "array"),
       optional = TRUE
     )
 
@@ -90,6 +97,7 @@ load_collection = Process$new(
   operation = function(id, spatial_extent, temporal_extent, bands = NULL) {
 
     ic = Session$data[[id]]$getCollection()
+    #ic = image_collection("C:/Users/ReneS/Documents/R/BSc/openEo.gdalcubes/data/L8.db")
 
     if (! is.null(spatial_extent$crs)) {
       crsString = toString(spatial_extent$crs)
@@ -124,7 +132,7 @@ load_collection = Process$new(
                              t0 = temporal_extent[[1]], t1 = temporal_extent[[2]])
       }
     }
-#browser()
+
     view = cube_view(srs = crs, extent = extent,
                      dx=500, dy=500, dt = "P1Y", resampling="average", aggregation="median")
 
@@ -147,25 +155,28 @@ save_result = Process$new(
     Parameter$new(
       name = "data",
       description = "The data to save.",
-      type = "object",
-      subtype = "raster-cube"
+      schema = list(
+        type = "object",
+        subtype = "raster-cube")
     ),
     Parameter$new(
       name = "format",
       description = "The file format to save to.",
-      type = "string",
-      subtype = "output-format"
+      schema = list(
+        type = "string",
+        subtype = "output-format")
     ),
     Parameter$new(
       name = "options",
       description = "The file format parameters to be used to create the file(s).",
-      type = "object",
-      subtype = "output-format-options"
+      schema = list(
+        type = "object",
+        subtype = "output-format-options")
     )
   ),
   returns = list(
     description = "false if saving failed, true otherwise.",
-    schema = schema_format(type = "boolean")
+    schema = list(type = "boolean")
   ),
   operation = function(data, format, options = NULL) {
 
@@ -185,13 +196,15 @@ filter_bands = Process$new(
     Parameter$new(
       name = "data",
       description = "A data cube with bands.",
-      type = "object",
-      subtype = "raster-cube"
+      schema = list(
+        type = "object",
+        subtype = "raster-cube")
     ),
     Parameter$new(
       name = "bands",
       description = "A list of band names.",
-      type = "array"
+      schema = list(
+        type = "array")
     )
   ),
   returns = eo_datacube,
@@ -214,14 +227,16 @@ filter_bbox = Process$new(
     Parameter$new(
       name = "data",
       description = "A data cube.",
-      type = "object",
-      subtype = "raster-cube"
+      schema = list(
+        type = "object",
+        subtype = "raster-cube")
     ),
     Parameter$new(
       name = "extent",
       description = "A bounding box, which may include a vertical axis (see base and height).",
-      type = "object",
-      subtype = "bounding-box"
+      schema = list(
+        type = "object",
+        subtype = "bounding-box")
     )
   ),
   returns = eo_datacube,
@@ -248,5 +263,95 @@ filter_bbox = Process$new(
     cube = filter_geom(data, pol, srs = crs)
 
     return(cube)
+  }
+)
+
+#' reduce dimension
+reduce_dimension = Process$new(
+  id = "reduce_dimension",
+  description = "Applies a unary reducer to a data cube dimension by collapsing all the pixel values along the specified dimension into an output value computed by the reducer. ",
+  categories = list("cubes", "reducer"),
+  summary = "Reduce dimensions",
+  parameters = list(
+    Parameter$new(
+      name = "data",
+      description = "A data cube with bands.",
+      schema = list(
+        type = "object",
+        subtype = "raster-cube")
+    ),
+    Parameter$new(
+      name = "reducer",
+      description = "A reducer to apply on the specified dimension.",
+      schema = list(
+        type = "object",
+        subtype = "process-graph",
+        parameters = list(
+          Parameter$new(
+            name = "data",
+            description = "A labeled array with elements of any type.",
+            schema = list(
+              type = "array",
+              subtype = "labeled-array",
+              items = list(description = "Any data type"))
+          ),
+          Parameter$new(
+            name = "context",
+            description = "Additional data passed by the user.",
+            schema = list(description = "Any data type")
+          )
+        )
+      )
+    ),
+    Parameter$new(
+      name = "dimension",
+      description = "The name of the dimension over which to reduce.",
+      schema = list(
+        type = "string")
+    )
+  ),
+  returns = eo_datacube,
+  operation = function(data, reducer, dimension) {
+
+browser()
+
+    return(cube)
+  }
+)
+
+#'array_element
+array_element = Process$new(
+  id = "array_element",
+  description = "Returns the element with the specified index or label from the array.",
+  categories = list("arrays", "reducer"),
+  summary = "Get an element from an array",
+  parameters = list(
+    Parameter$new(
+      name = "data",
+      description = "An array",
+      schema = list(type = "array")
+    ),
+    Parameter$new(
+      name = "index",
+      description = "The zero-based index of the element to retrieve.",
+      schema = list(type ="integer")
+    ),
+    Parameter$new(
+      name = "label",
+      description = "The label of the element to retrieve.",
+      schema = list(type =c("number", "string"))
+    ),
+    Parameter$new(
+      name = "return_nodata",
+      description = "By default this process throws an ArrayElementNotAvailable exception if the index or label is invalid. If you want to return null instead, set this flag to true.",
+      schema = list(type ="boolean")
+    )
+  ),
+  returns = list(
+    description = "The value of the requested element.",
+    schema = list(type = "any")),
+  operation = function(data, index = NULL, label = NULL, return_nodata = FALSE) {
+browser()
+    return()
   }
 )

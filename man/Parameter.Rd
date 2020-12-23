@@ -20,6 +20,8 @@ Parameter
 \item{\code{optional}}{Is this parameter required for the process}
 
 \item{\code{value}}{Value of the parameter}
+
+\item{\code{parameters}}{Included parameters}
 }
 \if{html}{\out{</div>}}
 }
@@ -37,13 +39,7 @@ Parameter
 \subsection{Method \code{new()}}{
 
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Parameter$new(
-  name = NA,
-  description = NA,
-  type = NA,
-  subtype = NA,
-  optional = FALSE
-)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Parameter$new(name = NA, description = NA, schema = NA, optional = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -53,9 +49,7 @@ Parameter
 
 \item{\code{description}}{Short description of the parameter}
 
-\item{\code{type}}{Type of the parameter}
-
-\item{\code{subtype}}{More specific type of the parameter}
+\item{\code{schema}}{Type and subtype of the parameter}
 
 \item{\code{optional}}{Is this parameter required for the process}
 }

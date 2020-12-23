@@ -44,8 +44,17 @@
     job$status = "created"
     job$created = as.character(Sys.time())
 
-    if (!is.null(sent_job$title)) job$title = sent_job$title
-    if (!is.null(sent_job$description)) job$description = sent_job$description
+    if (!is.null(sent_job$title)) { job$title = sent_job$title }
+    if (!is.null(sent_job$description)) { job$description = sent_job$description }
+
+    dir = paste(Session$getConfig()$workspace.path, job$output.folder,sep = "/")
+    if (!dir.exists(dir)) {
+            dir.create(dir,recursive = TRUE)
+    }
+
+    txtDir = paste(dir, "jobInfo.txt",sep = "/")
+    txt <- list(Job_ID=job$id, Job_Title=job$title, Job_Description=job$description, Job_Status=job$status, Job_Created=job$created)
+    write.table(as.matrix(txt), txtDir, quote = FALSE, col.names = "Job info",sep = ": ")
 
     Session$assignJob(job)
 
@@ -110,30 +119,4 @@
     res$status = 404
     list(error = "Job not found")
   }
-}
-
-
-
-.createProcessGraph = function(req,res) {
-  tryCatch({
-    if (!is.null(req$postBody)) {
-      process_graph = fromJSON(req$postBody,simplifyDataFrame = FALSE)
-
-      graph = ProcessGraph$new(process_graph = process_graph[["process_graph"]],
-                               title = process_graph[["title"]],
-                               description = process_graph[["description"]])
-      graph$store()
-
-    #  res$setHeader(name = "Location",value=paste0(openeo.server$configuration$baseserver.url,"/","process_graphs/",graph$graph_id))
-      res$setHeader(name = "OpenEO-Identifier",value=graph$graph_id)
-
-      res$status = 201
-
-      return(res)
-    } else {
-      throwError("ProcessGraphMissing")
-      #No data or malformed json was send"
-    }
-  }, error=handleError)
-
 }

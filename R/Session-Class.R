@@ -186,13 +186,8 @@ SessionInstance <- R6Class(
     #' @param job Job to be executed
     #'
     runJob = function(job) {
+     dir = paste(Session$getConfig()$workspace.path, job$output.folder, sep = "/")
 
-      if (!dir.exists(job$output.folder)) {
-              dir.create(job$output.folder,recursive = TRUE)
-      }
-      dir = paste(Session$getConfig()$workspace.path, job$output.folder, sep = "/")
-#      tryCatch({
-#
         job = job$run()
         format = job$output
 
@@ -205,11 +200,7 @@ SessionInstance <- R6Class(
         if (format == "GTiff") {
           write_tif(job$results, dir = dir)
         }
-
-#      })
     }
-
-
   ),
 
   private = list(
