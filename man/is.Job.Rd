@@ -6,6 +6,12 @@
 \usage{
 is.Job(obj)
 }
+\arguments{
+\item{obj}{Job to be checked}
+}
+\value{
+Is obj a job or not
+}
 \description{
 Check if given job is a job
 }

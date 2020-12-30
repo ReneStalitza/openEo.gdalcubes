@@ -298,7 +298,9 @@ reduce_dimension = Process$new(
           Parameter$new(
             name = "context",
             description = "Additional data passed by the user.",
-            schema = list(description = "Any data type")
+            schema = list(
+              type = "any",
+              description = "Any data type")
           )
         )
       )
@@ -308,14 +310,95 @@ reduce_dimension = Process$new(
       description = "The name of the dimension over which to reduce.",
       schema = list(
         type = "string")
+    ),
+    Parameter$new(
+      name = "context",
+      description = "Additional data to be passed to the reducer.",
+      schema = list(
+        type = "any",
+        description = "Any data type")
     )
   ),
   returns = eo_datacube,
   operation = function(data, reducer, dimension) {
 
-browser()
+    if(dimension == "t" || dimension == "time") {
 
-    return(cube)
+      bands = bands(data)$name
+      bandStr = c()
+
+      for (i in 1:length(bands)) {
+        bandStr = append(bandStr, sprintf("%s(%s)", reducer, bands[i]))
+      }
+
+      cube = reduce_time(data, bandStr)
+      return(cube)
+    }
+    else {
+      stop('Please select "t" or "time" as dimension')
+    }
+  }
+)
+
+
+#' apply
+apply = Process$new(
+  id = "apply",
+  description = "Applies a unary process to each pixel value in the data cube (i.e. a local operation). ",
+  categories = "cubes",
+  summary = "Apply a process to each pixel",
+  parameters = list(
+    Parameter$new(
+      name = "data",
+      description = "A data cube.",
+      schema = list(
+        type = "object",
+        subtype = "raster-cube")
+    ),
+    Parameter$new(
+      name = "process",
+      description = "A unary process to be applied on each value, may consist of multiple sub-processes.",
+      schema = list(
+        type = "object",
+        subtype = "process-graph",
+        parameters = list(
+          Parameter$new(
+            name = "data",
+            description = "A labeled array with elements of any type.",
+            schema = list(
+              type = "array",
+              subtype = "labeled-array",
+              items = list(description = "Any data type"))
+          ),
+          Parameter$new(
+            name = "context",
+            description = "Additional data passed by the user.",
+            schema = list(
+              type = "any",
+              description = "Any data type")
+          )
+        )
+      )
+    ),
+    Parameter$new(
+      name = "context",
+      description = "Additional data to be passed to the process.",
+      schema = list(
+        type = "any",
+        description = "Any data type")
+    )
+  ),
+  returns = eo_datacube,
+  operation = function(data, process, context) {
+
+  if (!is.null(context) && class(context) == "character") {
+    cube = apply_pixel(data, process, names = context, keep_bands = FALSE)
+  }
+  else {
+    cube = apply_pixel(data, process, keep_bands = FALSE)
+  }
+
+  return(cube)
   }
 )
 
@@ -351,7 +434,13 @@ array_element = Process$new(
     description = "The value of the requested element.",
     schema = list(type = "any")),
   operation = function(data, index = NULL, label = NULL, return_nodata = FALSE) {
-browser()
-    return()
+
+    if (class(data) == "list") {
+      band = bands(data$data)$name[index + 1]
+    }
+    else {
+      band = bands(data)$name[index + 1]
+    }
+    return(band)
   }
 )

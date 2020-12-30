@@ -271,14 +271,13 @@ addEndpoint = function() {
                          filter = TRUE)
 
 
-
-
-  Session$assignProcess(array_element)
   Session$assignProcess(load_collection)
   Session$assignProcess(save_result)
   Session$assignProcess(filter_bands)
   Session$assignProcess(filter_bbox)
   Session$assignProcess(reduce_dimension)
+  Session$assignProcess(apply)
+  Session$assignProcess(array_element)
   Session$assignProcess(min)
   Session$assignProcess(max)
   Session$assignProcess(median)
@@ -287,11 +286,6 @@ addEndpoint = function() {
   Session$assignProcess(subtract)
   Session$assignProcess(multiply)
   Session$assignProcess(divide)
-  Session$assignProcess(sum)
-  #Session$assignProcess(array_element)
-
-
-
-
+  
 
 }

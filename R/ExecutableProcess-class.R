@@ -26,7 +26,7 @@ ExecutableProcess <- R6Class(
                         process= NULL) {
 
           if (! is.null(process)) {
-  
+#browser()
             variables = names(process)
             for (key in variables) {
               value = process[[key]]
@@ -49,7 +49,7 @@ ExecutableProcess <- R6Class(
     #' @description Run the operation including a generated list of parameters
     #'
     execute = function() {
-
+#browser()
         parameterList = list()
         for (key in 1:length(self$parameters)) {
           name = self$parameters[[key]]$name
@@ -59,7 +59,16 @@ ExecutableProcess <- R6Class(
             parameterList[[name]] = value$execute()
           }
           else if (class(value) == "list" && "from_parameter" %in% names(value)) {
-            par = parent.frame()$parameterList
+
+            for (i in 1:99) {
+              parent = parent.frame(i)
+
+              if (parent$name == "reducer" || parent$name == "process") {
+                break
+              }
+            }
+            par = parent$parameterList
+            #par = parent.frame()$parameterList
             parameterList[[name]] = par
           }
           else {

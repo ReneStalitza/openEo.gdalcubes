@@ -70,6 +70,20 @@ Collection <- R6Class(
       return(private$metadata)
     },
 
+    #' @description Convert bandlist to be openeo compliant
+    #'
+    #' @return converted bandlist
+    #'
+    getEoBands = function() {
+
+      list = list()
+      bands = as.list(self$getMetadata()$bands)
+      list = lapply(bands, function(x) {
+               append(list,  list(name = x))
+             })
+      return(list)
+    },
+
     #' @description List metadata for the collection handler
     #'
     collectionInfo = function() {
@@ -103,6 +117,7 @@ Collection <- R6Class(
     #' @description List extended metadata for the collection handler
     #'
     collectionInfoExtended = function() {
+
       list(
         stac_version = Session$getConfig()$stac_version,
         stac_extensions = list(Session$getConfig()$stac_extensions),
@@ -145,7 +160,7 @@ Collection <- R6Class(
             values = list(self$getMetadata()$bands)
           )
         ),
-        summaries = list(constellation = list("Landsat8"))
+        summaries = list(constellation = list("Landsat8"), 'eo:bands' = self$getEoBands())
       )
     }
   ),

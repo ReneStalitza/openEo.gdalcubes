@@ -27,6 +27,7 @@ Collection Class
 \item \href{#method-getCollection}{\code{Collection$getCollection()}}
 \item \href{#method-setMetadata}{\code{Collection$setMetadata()}}
 \item \href{#method-getMetadata}{\code{Collection$getMetadata()}}
+\item \href{#method-getEoBands}{\code{Collection$getEoBands()}}
 \item \href{#method-collectionInfo}{\code{Collection$collectionInfo()}}
 \item \href{#method-collectionInfoExtended}{\code{Collection$collectionInfoExtended()}}
 \item \href{#method-clone}{\code{Collection$clone()}}
@@ -104,6 +105,19 @@ Get metadata of the collection
 
 \subsection{Returns}{
 metadata of the collection
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getEoBands"></a>}}
+\if{latex}{\out{\hypertarget{method-getEoBands}{}}}
+\subsection{Method \code{getEoBands()}}{
+Convert bandlist to be openeo compliant
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Collection$getEoBands()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+converted bandlist
 }
 }
 \if{html}{\out{<hr>}}

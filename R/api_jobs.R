@@ -47,14 +47,7 @@
     if (!is.null(sent_job$title)) { job$title = sent_job$title }
     if (!is.null(sent_job$description)) { job$description = sent_job$description }
 
-    dir = paste(Session$getConfig()$workspace.path, job$output.folder,sep = "/")
-    if (!dir.exists(dir)) {
-            dir.create(dir,recursive = TRUE)
-    }
-
-    txtDir = paste(dir, "jobInfo.txt",sep = "/")
-    txt <- list(Job_ID=job$id, Job_Title=job$title, Job_Description=job$description, Job_Status=job$status, Job_Created=job$created)
-    write.table(as.matrix(txt), txtDir, quote = FALSE, col.names = "Job info",sep = ": ")
+    writeJobInfo(job)
 
     Session$assignJob(job)
 

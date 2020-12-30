@@ -16,8 +16,8 @@ min = Process$new(
         type = "array")
   )),
   returns = list(
-    description = "The minimum value",
-    schema = list(type = "number")),
+    description = "The minimum value or min as string for further processes",
+    schema = list(type = c("number", "string"))),
   operation = function(data) {
 
     if ("cube" %in% class(data) || "cube" %in% class(data$data)) {
@@ -26,8 +26,6 @@ min = Process$new(
     else {
       return(min(data))
     }
-    #cube = data$data
-    #return(reduce_time(cube, "min(B03)"))
   }
 )
 
@@ -45,10 +43,16 @@ max = Process$new(
         type = "array")
   )),
   returns = list(
-    description = "The maximum value",
-    schema = list(type = "number")),
+    description = "The maximum value or max as string for further processes",
+    schema = list(type = c("number", "string"))),
   operation = function(data) {
-    return(max(data))
+
+    if ("cube" %in% class(data) || "cube" %in% class(data$data)) {
+      return("max")
+    }
+    else {
+      return(max(data))
+    }
   }
 )
 
@@ -61,15 +65,21 @@ mean = Process$new(
   parameters = list(
     Parameter$new(
       name = "data",
-      description = "A array of numbers",
+      description = "A array of numbers or mean as string for further processes",
       schema = list(
         type = "array")
   )),
   returns = list(
     description = "The computed arithmetic mean.",
-    schema = list(type = "number")),
+    schema = list(type = c("number", "string"))),
   operation = function(data) {
-    return(mean(data))
+
+    if ("cube" %in% class(data) || "cube" %in% class(data$data)) {
+      return("mean")
+    }
+    else {
+      return(mean(data))
+    }
   }
 )
 
@@ -87,10 +97,16 @@ median = Process$new(
         type = "array")
   )),
   returns = list(
-    description = "The computed statistical median.",
-    schema = list(type = "number")),
+    description = "The computed statistical median or median as string for further processes.",
+    schema = list(type = c("number", "string"))),
   operation = function(data) {
-    return(median(data))
+
+    if ("cube" %in% class(data) || "cube" %in% class(data$data)) {
+      return("median")
+    }
+    else {
+      return(median(data))
+    }
   }
 )
 
@@ -118,7 +134,14 @@ add = Process$new(
     description = "The computed sum of the two numbers.",
     schema = list(c("number", "null"))),
   operation = function(x, y) {
-    return(x + y)
+
+    classes = c("number", "null")
+    if(class(x) %in% names(classes) && class(y) %in% names(classes)) {
+      return(x + y)
+    }
+    else {
+      return(sprintf("(%s+%s)", x, y))
+    }
   }
 )
 
@@ -146,7 +169,14 @@ subtract = Process$new(
     description = "The computed result.",
     schema = list(c("number", "null"))),
   operation = function(x, y) {
-    return(x - y)
+
+    classes = c("number", "null")
+    if(class(x) %in% names(classes) && class(y) %in% names(classes)) {
+      return(x - y)
+    }
+    else {
+      return(sprintf("(%s-%s)", x, y))
+    }
   }
 )
 
@@ -174,7 +204,13 @@ multiply = Process$new(
     description = "The computed product of the two numbers.",
     schema = list(c("number", "null"))),
   operation = function(x, y) {
-    return(x * y)
+    classes = c("number", "null")
+    if(class(x) %in% names(classes) && class(y) %in% names(classes)) {
+      return(x * y)
+    }
+    else {
+      return(sprintf("(%s*%s)", x, y))
+    }
   }
 )
 
@@ -202,28 +238,13 @@ divide = Process$new(
     description = "The computed result.",
     schema = list(c("number", "null"))),
   operation = function(x, y) {
-    return(x / y)
-  }
-)
 
-
-#'sum
-sum = Process$new(
-  id = "sum",
-  description = "Sums up all elements in a sequential array of numbers and returns the computed sum.",
-  categories = list("math", "reducer"),
-  summary = "Compute the sum by adding up numbers",
-  parameters = list(
-    Parameter$new(
-      name = "data",
-      description = "A array of numbers",
-      schema = list(
-        type = "array")
-  )),
-  returns = list(
-    description = "The computed sum of the sequence of numbers.",
-    schema = list(c("number", "null"))),
-  operation = function(x, y) {
-    return(sum(data))
+    classes = c("number", "null")
+    if(class(x) %in% names(classes) && class(y) %in% names(classes)) {
+      return(x / y)
+    }
+    else {
+      return(sprintf("(%s/%s)", x, y))
+    }
   }
 )

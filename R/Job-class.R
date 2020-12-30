@@ -109,12 +109,16 @@ Job <- R6Class(
 
       tryCatch({
         self$status = "running"
+        writeJobInfo(self)
+
         self$results = self$process$process_graph$execute()
         self$status = "finished"
+        writeJobInfo(self)
      },
         error=function (e) {
         self$status = "error"
         self$results = NULL
+        writeJobInfo(self)
       },
       finally = {
         return(self)
@@ -165,17 +169,29 @@ getJobIdIndex = function(jid) {
   return(index)
 }
 
-#exists.Job = function(id) {
-#  id = getJobIdIndex(id)
-#  if (nchar(id) == 12 && ! is.null(id)) {
-#    return(result)
-#  } else {
-#    return(FALSE)
-#  }
-#}
 
 #' Check if given job is a job
+#' @param obj Job to be checked
+#' @return Is obj a job or not
 #' @export
 is.Job = function(obj) {
   return("Job" %in% class(obj))
+}
+
+
+#' Write the job properties to a txt file
+#' @param job Job from which the properties will be stored
+#' @export
+writeJobInfo = function(job) {
+
+  if ("Job" %in% class(job)) {
+    dir = paste(Session$getConfig()$workspace.path, job$output.folder,sep = "/")
+    if (!dir.exists(dir)) {
+      dir.create(dir,recursive = TRUE)
+    }
+
+    txtDir = paste(dir, "jobInfo.txt",sep = "/")
+    txt <- list(Job_ID=job$id, Job_Title=job$title, Job_Description=job$description, Job_Status=job$status, Job_Created=job$created)
+    write.table(as.matrix(txt), txtDir, quote = FALSE, col.names = "Job info",sep = ": ")
+  }
 }
