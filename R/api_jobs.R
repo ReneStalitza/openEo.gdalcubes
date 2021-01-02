@@ -9,7 +9,7 @@
 
     links = list(
       rel = "self",
-      href = paste(Session$getConfig()$base_url, "jobs", sep = "/")
+      href = paste(Session$getBaseUrl(), "jobs", sep = "/")
     )
 
     result = as.vector(c(jobs, links =list(list(links))))
@@ -52,7 +52,7 @@
     Session$assignJob(job)
 
     res$setHeader(name = "Location",
-                  value= paste(Session$getConfig()$base_url, "jobs", job$id, sep ="/"))
+                  value= paste(Session$getBaseUrl(), "jobs", job$id, sep ="/"))
     res$setHeader(name = "OpenEO-Identifier",value = job$id)
     res$status = 201
 
@@ -86,10 +86,8 @@
       list(error = "Job not finished")
     }
     else {
-      config = Session$getConfig()
-
-      job_results = paste(config$workspace.path,"jobs",job_id,sep="/")
-      base = paste0(config$base_url,"/","result/",job_id)
+      job_results = paste(Session$getConfig()$workspace.path,"jobs",job_id,sep="/")
+      base = paste0(Session$getBaseUrl(),"/","result/",job_id)
       links = paste("file:/",job_results,list.files(job_results),sep="/")
       files = list.files(job_results)
 

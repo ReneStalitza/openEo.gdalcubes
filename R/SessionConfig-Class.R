@@ -1,11 +1,18 @@
 #' SessionConfig class
 #' @description Session configuration
+#' @param api.port On which port to run the plumer API
+#' @param host Host of the plumber API
 #'
 #' @export
-SessionConfig = function() {
+SessionConfig = function(api.port = NULL, host = NULL) {
 
-  api.port = 8000
-  host = "127.0.0.1"
+  if (is.null(api.port)) {
+    api.port = 8000
+  }
+  if (is.null(host)) {
+    host = "127.0.0.1"
+  }
+
 
   default = list(
     api_version = "1.0.0",
@@ -14,7 +21,7 @@ SessionConfig = function() {
     stac_extensions = "datacube",
 
     id = "openeo-gdalcubes-R-driver",
-    title = "gdalcubes",
+    title = "openeo-gdalcubes-R-driver",
     description = "This is an openEo-compliant R driver interfacing with the package gdalcubes",
 
     links = NULL,
@@ -28,6 +35,8 @@ SessionConfig = function() {
     api.port = api.port,
     host = host,
     base_url = paste("http://",host, ":", api.port,  sep = ""),
+    #baseserver.url = "http://localhost:8000",
+
 
     outputFormats = list(
       GTiff = list(

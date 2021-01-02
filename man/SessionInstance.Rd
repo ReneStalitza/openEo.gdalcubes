@@ -30,6 +30,8 @@ Session class
 \item \href{#method-getToken}{\code{SessionInstance$getToken()}}
 \item \href{#method-setToken}{\code{SessionInstance$setToken()}}
 \item \href{#method-startSession}{\code{SessionInstance$startSession()}}
+\item \href{#method-setBaseUrl}{\code{SessionInstance$setBaseUrl()}}
+\item \href{#method-getBaseUrl}{\code{SessionInstance$getBaseUrl()}}
 \item \href{#method-initDirectory}{\code{SessionInstance$initDirectory()}}
 \item \href{#method-initEndpoints}{\code{SessionInstance$initEndpoints()}}
 \item \href{#method-createEndpoint}{\code{SessionInstance$createEndpoint()}}
@@ -46,9 +48,16 @@ Session class
 \subsection{Method \code{new()}}{
 Create a new session
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{SessionInstance$new()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{SessionInstance$new(configuration = NULL)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{configuration}}{Session configuration}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-getEndpoints"></a>}}
@@ -112,9 +121,39 @@ Assign this token to the session
 \subsection{Method \code{startSession()}}{
 Start the session
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{SessionInstance$startSession()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{SessionInstance$startSession(port = NULL, host = NULL)}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setBaseUrl"></a>}}
+\if{latex}{\out{\hypertarget{method-setBaseUrl}{}}}
+\subsection{Method \code{setBaseUrl()}}{
+Set base url
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{SessionInstance$setBaseUrl(port, host)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{port}}{Port}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getBaseUrl"></a>}}
+\if{latex}{\out{\hypertarget{method-getBaseUrl}{}}}
+\subsection{Method \code{getBaseUrl()}}{
+Get base url
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{SessionInstance$getBaseUrl()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+base url
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-initDirectory"></a>}}

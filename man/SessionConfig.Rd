@@ -4,7 +4,12 @@
 \alias{SessionConfig}
 \title{SessionConfig class}
 \usage{
-SessionConfig()
+SessionConfig(api.port = NULL, host = NULL)
+}
+\arguments{
+\item{api.port}{On which port to run the plumer API}
+
+\item{host}{Host of the plumber API}
 }
 \description{
 Session configuration

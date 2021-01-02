@@ -30,7 +30,7 @@ NULL
     list$endpoints = endpoints$paths
     list$links = list(list(
       rel = "self",
-      href = paste(Session$getConfig()$base_url, "", sep = "/")))
+      href = paste(Session$getBaseUrl(), "", sep = "/")))
 
   return(list)
 
@@ -38,12 +38,11 @@ NULL
 
 .well_known = function() {
 
-  config = Session$getConfig()
   version = list(versions = list())
 
 
-  obj = tibble(url = config$base_url,
-               api_version = config$api_version,
+  obj = tibble(url = Session$getBaseUrl(),
+               api_version = Session$getConfig()$api_version,
                production = FALSE)
   version$versions = obj
 
@@ -67,10 +66,9 @@ NULL
 }
 
 .conformance = function() {
-  config = Session$getConfig()
 
   list = list()
-  list$conformsTo = list(config$OGC_conformanceLink)
+  list$conformsTo = list(Session$getConfig()$OGC_conformanceLink)
 
   return(list)
 
@@ -83,7 +81,7 @@ NULL
   })))
   collections$links = list(list(
      rel = "self",
-     href = paste(Session$getConfig()$base_url, "collections", sep = "/")
+     href = paste(Session$getBaseUrl(), "collections", sep = "/")
    ))
 
   return(collections)
@@ -104,7 +102,7 @@ NULL
 
   processes$links = list(list(
     rel = "self",
-    href = paste(Session$getConfig()$base_url, "processes", sep = "/")
+    href = paste(Session$getBaseUrl(), "processes", sep = "/")
   ))
 
   return(processes)
@@ -173,8 +171,6 @@ NULL
     res$body = readBin(first, "raw", n = file.info(first)$size)
     #browser()
     res$setHeader("Content-Type", "image/tiff")
-    #res$setHeader("Content-Type", paste("application/x-gdal-",format,sep=""))
-    #res$setHeader("Content-Disposition", paste("attachment; filename=","\"output",file.ext,"\"",sep=""))
 
     return(res)
   }
@@ -286,6 +282,6 @@ addEndpoint = function() {
   Session$assignProcess(subtract)
   Session$assignProcess(multiply)
   Session$assignProcess(divide)
-  
+
 
 }

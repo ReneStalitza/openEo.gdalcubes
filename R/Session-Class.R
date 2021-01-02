@@ -21,14 +21,19 @@ SessionInstance <- R6Class(
     jobs =NULL,
 
     #' @description Create a new session
-    initialize = function() {
+    #' @param configuration Session configuration
+    initialize = function(configuration = NULL) {
 
       self$graphs = list()
       self$processes = list()
       self$data = list()
       self$jobs = list()
 
-      private$config = SessionConfig()
+      if (is.null(configuration) || class(configuration) != "ServerConfig") {
+        configuration = SessionConfig()
+      }
+
+      private$config = configuration
 
       self$initEndpoints()
 
@@ -61,16 +66,37 @@ SessionInstance <- R6Class(
     },
 
     #' @description Start the session
-    startSession = function(){
+    startSession = function(port = NULL, host = NULL){
 
+      if(is.null(port)) {
+        port = private$config$api.port
+      }
+      if(is.null(host)) {
+        host = private$config$host
+      }
+
+      self$setBaseUrl(port, host)
       private$initRouter()
       self$initDirectory()
 
       addEndpoint()
-
       loadDemoData()
 
-      private$router$run(port=private$config$api.port, host=private$config$host)
+      private$router$run(port = port, host = host)
+    },
+
+    #' @description Set base url
+    #' @param port Port
+    #' @paramhost Host
+    setBaseUrl = function(port, host) {
+      private$base_url = NULL
+      private$base_url = paste("http://",host, ":", port,  sep = "")
+    },
+
+    #' @description Get base url
+    #' @return base url
+    getBaseUrl = function() {
+      return(private$base_url)
     },
 
     #' @description initializes workspace and data paths
@@ -209,6 +235,7 @@ SessionInstance <- R6Class(
     router = NULL,
     config = NULL,
     token = NULL,
+    base_url = NULL,
 
     initRouter = function() {
 
@@ -223,9 +250,10 @@ SessionInstance <- R6Class(
 
 
 #' Creates a new instance from the class 'SessionInstance' and assigns the name 'Session'
+#' @param configuration Edited configuration for the session
 #'
 #' @export
 createSessionInstance = function(configuration = NULL) {
-  assign("Session", SessionInstance$new(),envir=.GlobalEnv)
+  assign("Session", SessionInstance$new(configuration),envir=.GlobalEnv)
   invisible(Session)
 }
