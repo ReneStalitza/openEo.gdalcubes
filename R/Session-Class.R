@@ -66,6 +66,8 @@ SessionInstance <- R6Class(
     },
 
     #' @description Start the session
+    #' @param port On which port to run
+    #' @param host Host of the plumber API
     startSession = function(port = NULL, host = NULL){
 
       if(is.null(port)) {
@@ -83,11 +85,12 @@ SessionInstance <- R6Class(
       loadDemoData()
 
       private$router$run(port = port, host = host)
+      #private$router$run(port = port)
     },
 
     #' @description Set base url
-    #' @param port Port
-    #' @paramhost Host
+    #' @param port Which port is currently saved
+    #' @param host Which host is currently saved
     setBaseUrl = function(port, host) {
       private$base_url = NULL
       private$base_url = paste("http://",host, ":", port,  sep = "")

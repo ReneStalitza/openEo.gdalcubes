@@ -1,7 +1,7 @@
 Package: openEo.gdalcubes
 Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
-Authors@R: 
+Authors@R:
     person(given = "First",
            family = "Last",
            role = c("aut", "cre"),
@@ -14,14 +14,14 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
-Imports: 
+Imports:
     plumber,
     R6,
     dplyr,
     gdalcubes
-Collate: 
+Collate:
     'api_process_graphs.R'
-    'api_jobs.R'
+    'api_job.R'
     'Parameter-class.R'
     'Process-class.R'
     'processes.R'
@@ -35,5 +35,5 @@ Collate:
     'ProcessGraph-class.R'
     'SessionConfig-Class.R'
     'load.R'
-Depends: 
+Depends:
     R (>= 2.10)

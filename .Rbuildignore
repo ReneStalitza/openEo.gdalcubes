@@ -1,4 +1,12 @@
-^openEo\.gdalcubes\.Rproj$
+^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.Rhistory$
-./data
+^\.git$
+data
+jobs
+^Dockerfiles$
+^DOCKERFILE$
+^README.md$
+^DOCKERFILE$
+^DOCKERFILE-base$
+^docker-compose.yaml$

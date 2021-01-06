@@ -124,6 +124,15 @@ Start the session
 \if{html}{\out{<div class="r">}}\preformatted{SessionInstance$startSession(port = NULL, host = NULL)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{port}}{On which port to run}
+
+\item{\code{host}}{Host of the plumber API}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-setBaseUrl"></a>}}
@@ -137,7 +146,9 @@ Set base url
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{port}}{Port}
+\item{\code{port}}{Which port is currently saved}
+
+\item{\code{host}}{Which host is currently saved}
 }
 \if{html}{\out{</div>}}
 }

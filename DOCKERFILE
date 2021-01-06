@@ -4,7 +4,7 @@ LABEL version="1.0.0"
 LABEL description="A simple openEO backend including gdalcubes"
 
 # create the path for the user files
-RUN mkdir -p /opt/dockerfiles/ && mkdir -p /var/openeo/workspace/
+RUN mkdir -p /opt/dockerfiles/ && mkdir -p /var/openeo/workspace/ && mkdir -p /var/openeo/workspace/data/
 
 COPY ./ /opt/dockerfiles/
 
@@ -15,7 +15,6 @@ RUN apt-get update -qq && apt-get -y --no-install-recommends install \
 	plumber \
 	gdalcubes \
 	&& R -e "devtools::install('/opt/dockerfiles',upgrade_dependencies=FALSE)"
-
 
 # cmd or entrypoint for startup
 CMD ["R", "-q", "--no-save", "-f /opt/dockerfiles/Dockerfiles/start.R"]
