@@ -26,6 +26,8 @@ Job
 \item{\code{results}}{Result of the executed process}
 
 \item{\code{output}}{Format of the output}
+
+\item{\code{openEoGraph}}{Store the openEo graph for the job info}
 }
 \if{html}{\out{</div>}}
 }

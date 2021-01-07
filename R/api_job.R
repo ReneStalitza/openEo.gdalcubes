@@ -1,9 +1,7 @@
 # job handlers
 
 .listAllJobs = function() {
-  jobs = list(jobs = unname(lapply(Session$jobs, function(job_id){
-      job = Job$new(job_id)
-      job$load()
+  jobs = list(jobs = unname(lapply(Session$jobs, function(job){
       return(job$jobInfo())
     })))
 

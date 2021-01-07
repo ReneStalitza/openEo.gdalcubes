@@ -8,6 +8,7 @@
 #' @field description Shortly description of the planned result
 #' @field results Result of the executed process
 #' @field output Format of the output
+#' @field openEoGraph Store the openEo graph for the job info
 #'
 #' @importFrom R6 R6Class
 #'
@@ -23,6 +24,7 @@ Job <- R6Class(
     description = NULL,
     results = NULL,
     output = NULL,
+    openEoGraph = NULL,
 
     #' @description Initialize job
     #'
@@ -44,6 +46,7 @@ Job <- R6Class(
       }
       self$created = Sys.time()
       self$status = "created"
+      self$openEoGraph = process$process_graph
 
       if (!is.null(process)) {
         if (!is.ProcessGraph(process)) {
@@ -135,7 +138,7 @@ Job <- R6Class(
         id = self$id,
         title = self$title,
         description = self$description,
-        process = list(process_graph = self$process$process_graph$processInfo()),
+        process = list(process_graph = self$openEoGraph),
         status = self$status,
         created = self$created
       )

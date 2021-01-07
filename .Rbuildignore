@@ -4,9 +4,9 @@
 ^\.git$
 data
 jobs
+Examples
 ^Dockerfiles$
 ^DOCKERFILE$
 ^README.md$
 ^DOCKERFILE$
 ^DOCKERFILE-base$
-^docker-compose.yaml$

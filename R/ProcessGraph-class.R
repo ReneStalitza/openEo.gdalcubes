@@ -124,7 +124,7 @@ ProcessGraph <- R6Class(
           clonedParameters=append(clonedParameters,par$clone(deep=TRUE))
         }
         executable$parameters = clonedParameters
-#browser()
+
 
         for (key in names(params)) {
           value = params[[key]]

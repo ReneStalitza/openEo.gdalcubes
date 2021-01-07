@@ -63,12 +63,11 @@ ExecutableProcess <- R6Class(
             for (i in 1:99) {
               parent = parent.frame(i)
 
-              if (parent$name == "reducer" || parent$name == "process") {
+              if (parent$name == "reducer") {
                 break
               }
             }
             par = parent$parameterList
-            #par = parent.frame()$parameterList
             parameterList[[name]] = par
           }
           else {

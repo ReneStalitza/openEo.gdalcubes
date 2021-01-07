@@ -1,5 +1,6 @@
 #' @include Process-class.R
 #' @import gdalcubes
+#' @import useful
 NULL
 
 #' schema_format
@@ -171,7 +172,8 @@ save_result = Process$new(
       description = "The file format parameters to be used to create the file(s).",
       schema = list(
         type = "object",
-        subtype = "output-format-options")
+        subtype = "output-format-options"),
+      optional = TRUE
     )
   ),
   returns = list(
@@ -204,7 +206,8 @@ filter_bands = Process$new(
       name = "bands",
       description = "A list of band names.",
       schema = list(
-        type = "array")
+        type = "array"),
+      optional = TRUE
     )
   ),
   returns = eo_datacube,
@@ -293,14 +296,16 @@ reduce_dimension = Process$new(
             schema = list(
               type = "array",
               subtype = "labeled-array",
-              items = list(description = "Any data type"))
+              items = list(description = "Any data type",
+                           type = "any"))
           ),
           Parameter$new(
             name = "context",
             description = "Additional data passed by the user.",
             schema = list(
               type = "any",
-              description = "Any data type")
+              description = "Any data type"),
+            optional = TRUE
           )
         )
       )
@@ -316,7 +321,8 @@ reduce_dimension = Process$new(
       description = "Additional data to be passed to the reducer.",
       schema = list(
         type = "any",
-        description = "Any data type")
+        description = "Any data type"),
+      optional = TRUE
     )
   ),
   returns = eo_datacube,
@@ -334,75 +340,70 @@ reduce_dimension = Process$new(
       cube = reduce_time(data, bandStr)
       return(cube)
     }
+    else if (dimension == "bands") {
+
+      cube = apply_pixel(data, reducer, keep_bands = FALSE)
+      return(cube)
+    }
     else {
-      stop('Please select "t" or "time" as dimension')
+      stop('Please select "t", "time" or "bands" as dimension')
     }
   }
 )
 
 
-#' apply
-apply = Process$new(
-  id = "apply",
-  description = "Applies a unary process to each pixel value in the data cube (i.e. a local operation). ",
+#' merge_cubes
+merge_cubes = Process$new(
+  id = "merge_cubes",
+  description = "The data cubes have to be compatible. The two provided data cubes will be merged into one data cube. The overlap resolver is not supported.",
   categories = "cubes",
-  summary = "Apply a process to each pixel",
+  summary = "Merging two data cubes",
   parameters = list(
     Parameter$new(
-      name = "data",
+      name = "cube1",
       description = "A data cube.",
       schema = list(
         type = "object",
         subtype = "raster-cube")
     ),
     Parameter$new(
-      name = "process",
-      description = "A unary process to be applied on each value, may consist of multiple sub-processes.",
+      name = "cube2",
+      description = "A data cube.",
       schema = list(
         type = "object",
-        subtype = "process-graph",
-        parameters = list(
-          Parameter$new(
-            name = "data",
-            description = "A labeled array with elements of any type.",
-            schema = list(
-              type = "array",
-              subtype = "labeled-array",
-              items = list(description = "Any data type"))
-          ),
-          Parameter$new(
-            name = "context",
-            description = "Additional data passed by the user.",
-            schema = list(
-              type = "any",
-              description = "Any data type")
-          )
-        )
-      )
+        subtype = "raster-cube")
     ),
     Parameter$new(
       name = "context",
       description = "Additional data to be passed to the process.",
       schema = list(
         type = "any",
-        description = "Any data type")
+        description = "Any data type"),
+      optional = TRUE
     )
   ),
   returns = eo_datacube,
-  operation = function(data, process, context) {
+  operation = function(cube1, cube2, context) {
 
-  if (!is.null(context) && class(context) == "character") {
-    cube = apply_pixel(data, process, names = context, keep_bands = FALSE)
-  }
-  else {
-    cube = apply_pixel(data, process, keep_bands = FALSE)
-  }
+    if("cube" %in% class(cube1) && "cube" %in% class(cube2)) {
 
-  return(cube)
+      compare = compare.list(dimensions(cube1), dimensions(cube2))
+
+      if(FALSE %in% compare) {
+        stop("Dimensions of datacubes are not equal")
+      }
+      else {
+        cube = join_bands(c(cube1, cube2))
+        return(cube)
+      }
+    }
+    else {
+      stop('Provided cubes are not of class "cube"')
+    }
   }
 )
 
-#'array_element
+#'array element
 array_element = Process$new(
   id = "array_element",
   description = "Returns the element with the specified index or label from the array.",
@@ -417,17 +418,20 @@ array_element = Process$new(
     Parameter$new(
       name = "index",
       description = "The zero-based index of the element to retrieve.",
-      schema = list(type ="integer")
+      schema = list(type ="integer"),
+      optional = TRUE
     ),
     Parameter$new(
       name = "label",
       description = "The label of the element to retrieve.",
-      schema = list(type =c("number", "string"))
+      schema = list(type =c("number", "string")),
+      optional = TRUE
     ),
     Parameter$new(
       name = "return_nodata",
       description = "By default this process throws an ArrayElementNotAvailable exception if the index or label is invalid. If you want to return null instead, set this flag to true.",
-      schema = list(type ="boolean")
+      schema = list(type ="boolean"),
+      optional = TRUE
     )
   ),
   returns = list(
@@ -442,5 +446,68 @@ array_element = Process$new(
       band = bands(data)$name[index + 1]
     }
     return(band)
+  }
+)
+
+#'rename labels
+rename_labels = Process$new(
+  id = "rename_labels",
+  description = "Renames the labels of the specified dimension in the data cube from source to target.",
+  categories = "cubes",
+  summary = "Rename dimension labels",
+  parameters = list(
+    Parameter$new(
+      name = "data",
+      description = "The data cube.",
+      schema = list(
+        type = "object",
+        subtype = "raster-cube")
+    ),
+    Parameter$new(
+      name = "dimension",
+      description = "The name of the dimension to rename the labels for.",
+      schema = list(type = "string")
+    ),
+    Parameter$new(
+      name = "target",
+      description = "The new names for the labels.",
+      schema = list(
+        type = "array",
+        items = list(type = c("number", "string")))
+    ),
+    Parameter$new(
+      name = "source",
+      description = "The names of the labels as they are currently in the data cube.",
+      schema = list(
+        type = "array",
+        items = list(type = c("number", "string"))),
+      optional = TRUE
+    )
+  ),
+  returns = eo_datacube,
+  operation = function(data, dimension, target, source = NULL) {
+
+    if (dimension == "bands") {
+      if (! is.null(source)) {
+          if(class(source) == "number" || class(source) == "integer") {
+            band = bands(data)$name[source]
+            cube = apply_pixel(data, band, names = target)
+          }
+          else if (class(source) == "string" || class(source) == "character") {
+            cube = apply_pixel(data, source, names = target)
+          }
+          else {
+            stop("Source is not a number or string")
+          }
+      }
+      else {
+        band = bands(data)$name[1]
+        cube = apply_pixel(data, band, names = target)
+      }
+      return(cube)
+    }
+    else {
+      stop("Only bands dimension supported")
+    }
   }
 )
