@@ -10,9 +10,10 @@ login(user = "user",
 p = processes()
 
 # Load the collection
-datacube =  p$load_collection(id = "L8", 
-                       spatial_extent = list(west = -58,south = -5.5,east = -54.5,north = -2.9),
-                       temporal_extent = c("2014-06-01", "2017-09-01"))
+datacube =  p$load_collection(
+                id = "L8", 
+                spatial_extent = list(west = -58,south = -5.5,east = -54.5,north = -2.9),
+                temporal_extent = c("2014-06-01", "2017-09-01"))
 
 # Create a function for a normalized difference calculation
 normDiff = function(data, context) {
@@ -46,7 +47,7 @@ renamedNdvi = p$rename_labels(data = ndvi, dimension = "bands", target = "Ndvi")
 renamedEvi = p$rename_labels(data = evi, dimension = "bands", target = "Evi", source = "band1")
 renamedMinNdvi = p$rename_labels(data = minNdvi, dimension = "bands", target = "Min_Ndvi", source = 1)
 
-# Merge Ndvi- and Evi-Datacube into one, merging with the minNdvi is not possible due to different dimensions 
+# Merge Ndvi- and Evi-Datacube into one, merging with the minNdvi is not possible due to different dimensions
 merged = p$merge_cubes(renamedNdvi, renamedEvi)
 
 # Save result as last process including the offered file formats
@@ -56,7 +57,7 @@ saveMerged = p$save_result(data = merged, format = formats$output$NetCDF)
 saveRenamedMinNdvi = p$save_result(data = renamedMinNdvi, format = formats$output$GTiff)
 
 
-# Process and download data synchronously  
+# Process and download data synchronously
 compute_result(graph = saveMerged, output_file = "merged_ndvi_evi.nc")
 
 # Create and start a new batch job
@@ -68,4 +69,4 @@ describe_job(job = job)
 
 # Get an overview of the created files and download them to the desired folder
 list_results(job = job)
-download_results(job = job, folder = "path/to/your/folder") 
+download_results(job = job, folder = "path/to/your/folder")
