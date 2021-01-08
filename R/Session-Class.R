@@ -223,10 +223,10 @@ SessionInstance <- R6Class(
         gdalcubes_options(threads = 8)
         #gdalcubes_options(ncdf_compression_level = 1)
 
-        if (format == "NetCDF") {
+        if (format == "NetCDF" || format$title == "Network Common Data Form") {
           write_ncdf(job$results, file.path(dir, basename(tempfile(fileext = ".nc"))))
         }
-        if (format == "GTiff") {
+        if (format == "GTiff" || format$title == "GeoTiff") {
           write_tif(job$results, dir = dir)
         }
     }

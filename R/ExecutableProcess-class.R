@@ -49,7 +49,7 @@ ExecutableProcess <- R6Class(
     #' @description Run the operation including a generated list of parameters
     #'
     execute = function() {
-#browser()
+
         parameterList = list()
         for (key in 1:length(self$parameters)) {
           name = self$parameters[[key]]$name
@@ -75,7 +75,7 @@ ExecutableProcess <- R6Class(
           }
 
         }
-
+#browser()
         result = do.call(self$operation, parameterList, envir = self)
 
         return(result)

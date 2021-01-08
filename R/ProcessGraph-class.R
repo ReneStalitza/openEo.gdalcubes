@@ -104,10 +104,11 @@ ProcessGraph <- R6Class(
       },
 
       loadNode = function(graph, node, job) {
+
         graph_list = graph$process_graph[[node]]
         processId = graph_list[["process_id"]]
         graph_list[["process_id"]] = NULL
-
+#browser()
         if (!is.null(processId) && processId %in% names(Session$processes)) {
           process = Session$processes[[processId]]
 

@@ -440,10 +440,22 @@ array_element = Process$new(
   operation = function(data, index = NULL, label = NULL, return_nodata = FALSE) {
 
     if (class(data) == "list") {
-      band = bands(data$data)$name[index + 1]
+      bands = bands(data$data)$name
     }
     else {
-      band = bands(data)$name[index + 1]
+      bands = bands(data)$name
+    }
+
+
+    if(! is.null(index)) {
+      band = bands[index + 1]
+    }
+
+    else if (! is.null(label) && label %in% bands) {
+      band = label
+    }
+    else {
+      stop("Band not found")
     }
     return(band)
   }

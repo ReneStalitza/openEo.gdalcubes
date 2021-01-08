@@ -11,7 +11,7 @@ p = processes()
 
 # Load the collection
 datacube =  p$load_collection(
-                id = "L8", 
+                id = "L8",
                 spatial_extent = list(west = -58,south = -5.5,east = -54.5,north = -2.9),
                 temporal_extent = c("2014-06-01", "2017-09-01"))
 
@@ -30,7 +30,7 @@ evi = p$reduce_dimension(data = datacube, dimension = "bands", reducer = functio
   B05 = data[6]
   B04 = data[5]
   B02 = data[3]
-  return((2.5 * (B05 - B04)) / (B05 + (6 * B04) -(7.5 * B02)+ 1))
+  return(2.5 * ((B05 - B04) / (B05 + (6 * B04) - (7.5 * B02)+ 1)))
 })
 
 # Set a function for the following minimal ndvi calculation

@@ -158,11 +158,11 @@ NULL
   gdalcubes_options(threads = 8)
 
   if (! is.null(job$results)) {
-    if (format == "NetCDF") {
+    if (format == "NetCDF" || format$title == "Network Common Data Form") {
       file = write_ncdf(job$results)
       file.ext = ".nc"
     }
-    if (format == "GTiff") {
+    if (format == "GTiff" || format$title == "GeoTiff") {
       file = write_tif(job$results)
       file.ext = ".tif"
     }
