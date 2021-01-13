@@ -113,7 +113,7 @@ Job <- R6Class(
       tryCatch({
         self$status = "running"
         writeJobInfo(self)
-
+  #self$results = self$process$execute()
         self$results = self$process$process_graph$execute()
         self$status = "finished"
         writeJobInfo(self)
