@@ -10,27 +10,29 @@ login(user = "user",
 p = processes()
 
 # Load the collection
-datacube =  p$load_collection(
-                id = "L8",
-                spatial_extent = list(west = -58,south = -5.5,east = -54.5,north = -2.9),
-                temporal_extent = c("2014-06-01", "2017-09-01"))
+datacube =  p$load_collection(id = "L8",
+                       spatial_extent = list(west = -58,south = -5.5,east = -54.5,north = -2.9),
+                       temporal_extent = c("2014-06-01", "2017-09-01"))
+
+# Optionally filter the datacube for the desired bands
+datacubeFiltered = p$filter_bands(data = datacube, bands = c("B04", "B05"))
 
 # Create a function for a normalized difference calculation
 normDiff = function(data, context) {
-  B04 = data[5]
-  B05 = data[6]
-  return((B05-B04)/(B05+B04))
+  red = data[1]
+  nir = data[2]
+  return((nir-red)/(nir+red))
 }
 
 # Reduce the datacube to a datacube including only the band of the normalized difference calculation
-ndvi = p$reduce_dimension(data = datacube, dimension = "bands", reducer = normDiff)
+ndvi = p$reduce_dimension(data = datacubeFiltered, dimension = "bands", reducer = normDiff)
 
 # Create a datacube including an evi calculation with the following function
 evi = p$reduce_dimension(data = datacube, dimension = "bands", reducer = function(data ,context) {
-  B05 = data[6]
-  B04 = data[5]
-  B02 = data[3]
-  return(2.5 * ((B05 - B04) / (B05 + (6 * B04) - (7.5 * B02)+ 1)))
+  nir = p$array_element(data = data, label = "B05")
+  red = p$array_element(data = data, label = "B04")
+  blue = p$array_element(data = data, label = "B02")
+  return(2.5 * ((nir - red) / (nir + 6 * red - 7.5 * blue+ 1)))
 })
 
 # Set a function for the following minimal ndvi calculation
@@ -61,7 +63,7 @@ saveRenamedMinNdvi = p$save_result(data = renamedMinNdvi, format = formats$outpu
 compute_result(graph = saveMerged, output_file = "merged_ndvi_evi.nc")
 
 # Create and start a new batch job
-job = create_job(graph = saveRenamedMinNdvi, title = "minNdvi")
+job = create_job(graph = saveRenamedMinNdvi, title = "minNdvi", description = "Minimum NDVI calculation")
 start_job(job = job)
 
 # Get an overview of the job
@@ -69,4 +71,4 @@ describe_job(job = job)
 
 # Get an overview of the created files and download them to the desired folder
 list_results(job = job)
-download_results(job = job, folder = "path/to/your/folder")
+download_results(job = job, folder = "path/to/folder") 
