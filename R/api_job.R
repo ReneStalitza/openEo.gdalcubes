@@ -84,9 +84,10 @@
       list(error = "Job not finished")
     }
     else {
-      job_results = paste(Session$getConfig()$workspace.path,"jobs",job_id,sep="/")
-      base = paste0(Session$getBaseUrl(),"/","result/",job_id)
-      links = paste("file:/",job_results,list.files(job_results),sep="/")
+      job_results = paste(Session$getConfig()$workspace.path, "jobs", job_id, sep="/")
+      base = paste0(Session$getBaseUrl(), "/","result/", job_id)
+
+      links = paste(Session$getBaseUrl(), "jobs",job_id, list.files(job_results), sep="/")
       files = list.files(job_results)
 
       assets = list()
@@ -108,4 +109,15 @@
     res$status = 404
     list(error = "Job not found")
   }
+}
+
+.getJobFiles = function(req, res, job_id, file) {
+
+  resultFile = paste(Session$getConfig()$workspace.path, "jobs", job_id, file,sep="/")
+  content_type = plumber:::getContentType(tools::file_ext(resultFile))
+
+  res$body = readBin(resultFile, "raw", n = file.info(resultFile)$size)
+  res$setHeader("Content-Type", content_type)
+
+  return(res)
 }
