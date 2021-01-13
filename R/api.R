@@ -1,4 +1,6 @@
 #' @import dplyr
+#' @import gdalcubes
+#' @importFrom jsonlite fromJSON
 #' @include Session-Class.R
 #' @include Router.R
 #' @include math-processes.R
@@ -75,37 +77,38 @@ NULL
 }
 
 .collections = function() {
+  tryCatch({
+    collections = list(collections = unname(lapply(Session$data, function(x) {
+      return(x$collectionInfo())
+    })))
+    collections$links = list(list(
+       rel = "self",
+       href = paste(Session$getBaseUrl(), "collections", sep = "/")
+     ))
 
-  collections = list(collections = unname(lapply(Session$data, function(x) {
-    return(x$collectionInfo())
-  })))
-  collections$links = list(list(
-     rel = "self",
-     href = paste(Session$getBaseUrl(), "collections", sep = "/")
-   ))
-
-  return(collections)
-
+    return(collections)
+  },error = handleError)
 }
 
 .collectionId = function(req, res, collection_id) {
-
-  return (Session$data[[collection_id]]$collectionInfoExtended())
-
+  tryCatch({
+    return (Session$data[[collection_id]]$collectionInfoExtended())
+  }, error = handleError)
 }
 
 .processes = function() {
+  tryCatch({
+    processes = list(processes = unname(lapply(Session$processes, function(process){
+      return(process$processInfo())
+    })))
 
-  processes = list(processes = unname(lapply(Session$processes, function(process){
-    return(process$processInfo())
-  })))
+    processes$links = list(list(
+      rel = "self",
+      href = paste(Session$getBaseUrl(), "processes", sep = "/")
+    ))
 
-  processes$links = list(list(
-    rel = "self",
-    href = paste(Session$getBaseUrl(), "processes", sep = "/")
-  ))
-
-  return(processes)
+    return(processes)
+  }, error = handleError)
 }
 
 .login_basic = function(req, res) {
@@ -115,70 +118,86 @@ NULL
   user_name = unlist(strsplit(decoded,":"))[1]
   user_pwd = unlist(strsplit(decoded,":"))[2]
 
-  config = Session$getConfig()
-  if(user_name == config$user && user_pwd == config$password) {
-    #token = ids::random_id(bytes = 8)
+  tryCatch({
+    config = Session$getConfig()
+    if(user_name != config$user && user_pwd != config$password) {
+      throwError("CredentialsInvalid")
+    }
     token = "b34ba2bdf9ac9ee1"
     Session$setToken(token)
 
     return(list(access_token = token))
-  }
-  else {
-    stop("Credentials are invalid")
-  }
+  },
+  error = handleError)
 }
 
 .authorized = function(req, res) {
+  tryCatch({
+      auth = req$HTTP_AUTHORIZATION
+      sub = substr(auth,15,nchar(auth))
+      token = Session$getToken()
 
-  auth = req$HTTP_AUTHORIZATION
-  sub = substr(auth,15,nchar(auth))
-  token = Session$getToken()
-
-  if (is.null(auth)) {
-    res$status <- 401
-    list(error="Authentication required")
-  }
-  else if (sub != token) {
-    res$status <- 403
-    list(error="Authentication failed")
-  }
-   else {
-    forward()
-  }
+      if (is.null(auth)) {
+        throwError("AuthenticationRequired")
+      }
+      else if (sub != token) {
+        res$status <- 403
+        list(error="AuthenticationFailed")
+      }
+       else {
+        forward()
+      }
+  }, error = handleError)
 }
 
+
 .executeSynchronous = function(req, res) {
-
-  sent_job = jsonlite::fromJSON(req$rook.input$read_lines(),simplifyDataFrame = FALSE)
+browser()
+ tryCatch({
+  if (is.null(req$rook.input$read_lines())) {
+    throwError("ContentTypeInvalid",types="application/json")
+  }
+  sent_job = fromJSON(req$rook.input$read_lines())
   process_graph = sent_job$process
-  job = Job$new(process = process_graph)
+  newJob = Job$new(process = process_graph)
 
-  job = job$run()
+  job = newJob$run()
   format = job$output
-  gdalcubes_options(threads = 8)
+  #gdalcubes_options(threads = 8)
 
-  if (! is.null(job$results)) {
-    if (format == "NetCDF" || format$title == "Network Common Data Form") {
-      file = write_ncdf(job$results)
-      file.ext = ".nc"
+
+    if (class(format) == "list") {
+      if (format$title == "Network Common Data Form") {
+        file = write_ncdf(job$results)
+      }
+      if (format$title == "GeoTiff") {
+        file = write_tif(job$results)
+      }
+      else {
+        throwError("FormatUnsupported")
+      }
     }
-    if (format == "GTiff" || format$title == "GeoTiff") {
-      file = write_tif(job$results)
-      file.ext = ".tif"
+    else {
+      if (format == "NetCDF") {
+        file = write_ncdf(job$results)
+      }
+      if (format == "GTiff") {
+        file = write_tif(job$results)
+      }
+      else {
+        throwError("FormatUnsupported")
+      }
     }
+
     first = file[1]
     res$status = 200
     res$body = readBin(first, "raw", n = file.info(first)$size)
-    #browser()
-    res$setHeader("Content-Type", "image/tiff")
+    content_type = plumber:::getContentType(tools::file_ext(first))
+    res$setHeader("Content-Type", content_type)
 
     return(res)
-  }
-  else {
-    res$status = 404
-    list(error = "Execution failed")
-  }
 
+},error=handleError)
 }
 
 .cors_filter = function(req,res) {
@@ -256,6 +275,10 @@ addEndpoint = function() {
  Session$createEndpoint(path = "/jobs/{job_id}/results",
                         method = "GET",
                         handler = .getJobResults)
+
+  Session$createEndpoint(path = "/jobs/{job_id}/{file}",
+                         method = "GET",
+                         handler = .getJobFiles)
 
   Session$createEndpoint(path = "/credentials/basic",
                          method = "GET",
