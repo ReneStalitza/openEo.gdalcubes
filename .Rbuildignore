@@ -2,7 +2,7 @@
 ^\.Rproj\.user$
 ^\.Rhistory$
 ^\.git$
-data
+Demofiles
 jobs
 Examples
 ^Dockerfiles$
