@@ -104,12 +104,12 @@ SessionInstance <- R6Class(
         private$config$workspace.path <- getwd()
       }
 
-      if (! dir.exists(paste(private$config$workspace.path, "data", sep = "/"))) {
-        dir.create(paste(private$config$workspace.path, "data", sep = "/"))
+      if (! dir.exists(paste(private$config$workspace.path, "Demofiles", sep = "/"))) {
+        dir.create(paste(private$config$workspace.path, "Demofiles", sep = "/"))
       }
 
       if (is.null(private$config$data.path)) {
-        private$config$data.path <- paste(private$config$workspace.path,"data",sep="/")
+        private$config$data.path <- paste(private$config$workspace.path,"Demofiles",sep="/")
       }
     },
 
@@ -209,8 +209,9 @@ SessionInstance <- R6Class(
     #' @param job Job to be executed
     #'
     runJob = function(job) {
-     dir = paste(Session$getConfig()$workspace.path, job$output.folder, sep = "/")
-
+    
+     tryCatch({
+        dir = paste(Session$getConfig()$workspace.path, job$output.folder, sep = "/")
         job = job$run()
         format = job$output
 
@@ -233,7 +234,9 @@ SessionInstance <- R6Class(
             write_tif(job$results, dir = dir)
           }
         }
-
+      }, error = function(e) {
+          throwError("Internal",message=e$message)
+        })
     }
   ),
 
