@@ -12,11 +12,17 @@ SessionConfig = function(api.port = NULL, host = NULL) {
   if (is.null(host)) {
     host = "127.0.0.1"
   }
+#  if (is.null(host) || host == "0.0.0.0") {
+#    base = paste("http://", "localhost:", api.port,  sep = "")
+#  }
+#  else {
+    base = paste("http://",host, ":", api.port,  sep = "")
+#  }
 
 
   default = list(
     api_version = "1.0.0",
-    backend_version = "0.1.0",
+    backend_version = "1.0.0",
     stac_version = "0.9.0",
     stac_extensions = "datacube",
 
@@ -34,9 +40,7 @@ SessionConfig = function(api.port = NULL, host = NULL) {
 
     api.port = api.port,
     host = host,
-    base_url = paste("http://",host, ":", api.port,  sep = ""),
-    #baseserver.url = "http://localhost:8000",
-
+    base_url = base,
 
     outputFormats = list(
       GTiff = list(
@@ -47,13 +51,8 @@ SessionConfig = function(api.port = NULL, host = NULL) {
       NetCDF = list(
         title = "Network Common Data Form",
         description = "Export to NetCDF",
-        gis_data_types = list("raster"),
-        parameters = list(
-          compress = list(
-            type = "integer",
-            description = "Compression level"
-          )
-        )
+        gis_data_types = list("raster")
+
       )
     ),
     inputFormats = list(
