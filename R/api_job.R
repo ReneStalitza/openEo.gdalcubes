@@ -1,39 +1,48 @@
 # job handlers
 
 .listAllJobs = function() {
-  jobs = list(jobs = unname(lapply(Session$jobs, function(job){
-      return(job$jobInfo())
-    })))
+  tryCatch({
+    jobs = list(jobs = unname(lapply(Session$jobs, function(job){
+        return(job$jobInfo())
+      })))
 
     links = list(
       rel = "self",
       href = paste(Session$getBaseUrl(), "jobs", sep = "/")
-    )
+      )
 
     result = as.vector(c(jobs, links =list(list(links))))
-
     return(result)
-  }
+  }, error = handleError)
+}
 
 .getJobById = function(req, res, job_id) {
-  index = getJobIdIndex(job_id)
+  tryCatch({
+    index = getJobIdIndex(job_id)
 
-  if (! is.na(index)) {
-    job = Session$jobs[[index]]
+    if (! is.na(index)) {
+      job = Session$jobs[[index]]
 
-    res$body = jsonlite::toJSON(job$jobInfo(),na="null",null="null",auto_unbox = TRUE)
-    res$setHeader("Content-Type","application/json")
-    res$status = 200
+      tryCatch({
+          res$body = jsonlite::toJSON(job$jobInfo(),na="null",null="null",auto_unbox = TRUE)
+          res$setHeader("Content-Type","application/json")
+        },
+        error = function(e) {
+          throwError("Internal",message=e)
+        }
+      )
+
+    }
+    else {
+      throwError("JobNotFound")
+    }
 
     return(res)
-  }
-  else {
-    stop("Job not found")
-  }
+  }, error = handleError)
 }
 
 .createNewJob = function(req,res) {
-
+  tryCatch({
     sent_job = jsonlite::fromJSON(req$rook.input$read_lines(),simplifyDataFrame = FALSE)
 
     process_graph = sent_job$process
@@ -55,35 +64,45 @@
     res$status = 201
 
     return(res)
+  }, error = handleError)
+
 }
 
 .startJob = function(req, res, job_id) {
-  index = getJobIdIndex(job_id)
 
-  if (! is.na(index)) {
+  tryCatch({
+    index = getJobIdIndex(job_id)
+
+    if (is.na(index)) {
+      throwError("JobNotFound")
+    }
     job = Session$jobs[[index]]
-
     Session$runJob(job = job)
     res$status = 202
 
     return(res)
-  }
-  else {
-    res$status = 404
-    list(error = "Job not found")
-  }
+    },error=handleError)
+
+
 }
 
 .getJobResults = function(req, res, job_id) {
-  index = getJobIdIndex(job_id)
+browser()
+  tryCatch({
+    index = getJobIdIndex(job_id)
 
-  if (! is.na(index)) {
-    job = Session$jobs[[index]]
-    if (job$status != "finished") {
-      res$status = 404
-      list(error = "Job not finished")
+    if (is.na(index)) {
+      throwError("JobNotFound")
     }
     else {
+      job = Session$jobs[[index]]
+      if (job$status == "created") {
+        throwError("JobNotStarted")
+      }
+      if (job$status == "finished") {
+        throwError("JobNotFinished")
+      }
+
       job_results = paste(Session$getConfig()$workspace.path, "jobs", job_id, sep="/")
       base = paste0(Session$getBaseUrl(), "/","result/", job_id)
 
@@ -98,21 +117,17 @@
         assets = append(assets, apList)
       }
 
-      return(list(
-        title = job$title,
-        description = job$description,
-        assets = assets
-      ))
-    }
-  }
-  else {
-    res$status = 404
-    list(error = "Job not found")
-  }
+        return(list(
+          title = job$title,
+          description = job$description,
+          assets = assets
+        ))
+      }
+    }, error = handleError)
 }
 
 .getJobFiles = function(req, res, job_id, file) {
-
+tryCatch({
   resultFile = paste(Session$getConfig()$workspace.path, "jobs", job_id, file,sep="/")
   content_type = plumber:::getContentType(tools::file_ext(resultFile))
 
@@ -120,4 +135,6 @@
   res$setHeader("Content-Type", content_type)
 
   return(res)
+}, error = handleError)
+
 }
