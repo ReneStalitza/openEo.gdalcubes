@@ -29,7 +29,6 @@ loadDemoData = function() {
   path.db = paste(path,"L8.db", sep = "/")
   ic =image_collection(path.db)
 
-
   L8 = Collection$new(id = "L8", title = "Landsat8", description = "Landsat")
   L8$setCollection(ic)
   Session$assignData(L8)
