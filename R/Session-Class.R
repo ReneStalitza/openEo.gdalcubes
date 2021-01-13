@@ -66,16 +66,10 @@ SessionInstance <- R6Class(
     },
 
     #' @description Start the session
-    #' @param port On which port to run
-    #' @param host Host of the plumber API
-    startSession = function(port = NULL, host = NULL){
+    startSession = function(){
 
-      if(is.null(port)) {
-        port = private$config$api.port
-      }
-      if(is.null(host)) {
-        host = private$config$host
-      }
+      port = private$config$api.port
+      host = private$config$host
 
       self$setBaseUrl(port, host)
       private$initRouter()
@@ -220,15 +214,26 @@ SessionInstance <- R6Class(
         job = job$run()
         format = job$output
 
-        gdalcubes_options(threads = 8)
+        #gdalcubes::_options(threads = 8)
         #gdalcubes_options(ncdf_compression_level = 1)
 
-        if (format == "NetCDF" || format$title == "Network Common Data Form") {
-          write_ncdf(job$results, file.path(dir, basename(tempfile(fileext = ".nc"))))
+        if (class(format) == "list") {
+          if (format$title == "Network Common Data Form") {
+            write_ncdf(job$results, file.path(dir, basename(tempfile(fileext = ".nc"))))
+          }
+          if (format$title == "GeoTiff") {
+            write_tif(job$results, dir = dir)
+          }
         }
-        if (format == "GTiff" || format$title == "GeoTiff") {
-          write_tif(job$results, dir = dir)
+        else {
+          if (format == "NetCDF") {
+            write_ncdf(job$results, file.path(dir, basename(tempfile(fileext = ".nc"))))
+          }
+          if (format == "GTiff") {
+            write_tif(job$results, dir = dir)
+          }
         }
+
     }
   ),
 
