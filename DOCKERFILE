@@ -12,9 +12,13 @@ RUN apt-get update -qq && apt-get -y --no-install-recommends install \
 	gdal-bin \
 && install2.r --error \
 	--deps TRUE \
+  -r 'http://cran.rstudio.com' \
 	plumber \
 	gdalcubes \
-	&& R -e "devtools::install('/opt/dockerfiles',upgrade_dependencies=FALSE)"
+	useful \
+	ids \
+	R6 \
+	&& R -e "devtools::install('/opt/dockerfiles',dependencies=TRUE)"
 
 # cmd or entrypoint for startup
 CMD ["R", "-q", "--no-save", "-f /opt/dockerfiles/Dockerfiles/start.R"]
