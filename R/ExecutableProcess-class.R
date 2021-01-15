@@ -60,6 +60,7 @@ ExecutableProcess <- R6Class(
           }
           else if (class(value) == "list" && "from_parameter" %in% names(value)) {
 
+
             for (i in 1:99) {
               parent = parent.frame(i)
 
@@ -75,8 +76,8 @@ ExecutableProcess <- R6Class(
           }
 
         }
-#browser()
-        result = do.call(self$operation, parameterList, envir = self)
+        parameterList$job = self$job
+        result = rlang::invoke(self$operation, parameterList)
 
         return(result)
     }
