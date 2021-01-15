@@ -1,6 +1,5 @@
 #' @import dplyr
 #' @import gdalcubes
-#' @importFrom jsonlite fromJSON
 #' @include Session-Class.R
 #' @include Router.R
 #' @include math-processes.R
@@ -32,7 +31,7 @@ NULL
     list$endpoints = endpoints$paths
     list$links = list(list(
       rel = "self",
-      href = paste(Session$getBaseUrl(), "", sep = "/")))
+      href = paste(config$base_url, "", sep = "/")))
 
   return(list)
 
@@ -43,7 +42,7 @@ NULL
   version = list(versions = list())
 
 
-  obj = tibble(url = Session$getBaseUrl(),
+  obj = tibble(url = Session$getConfig()$base_url,
                api_version = Session$getConfig()$api_version,
                production = FALSE)
   version$versions = obj
@@ -83,7 +82,7 @@ NULL
     })))
     collections$links = list(list(
        rel = "self",
-       href = paste(Session$getBaseUrl(), "collections", sep = "/")
+       href = paste(Session$getConfig()$base_url, "collections", sep = "/")
      ))
 
     return(collections)
@@ -104,7 +103,7 @@ NULL
 
     processes$links = list(list(
       rel = "self",
-      href = paste(Session$getBaseUrl(), "processes", sep = "/")
+      href = paste(Session$getConfig()$base_url, "processes", sep = "/")
     ))
 
     return(processes)
@@ -152,25 +151,23 @@ NULL
 
 
 .executeSynchronous = function(req, res) {
-browser()
+
  tryCatch({
-  if (is.null(req$rook.input$read_lines())) {
-    throwError("ContentTypeInvalid",types="application/json")
-  }
-  sent_job = fromJSON(req$rook.input$read_lines())
+
+  sent_job = jsonlite::fromJSON(req$rook.input$read_lines(),simplifyDataFrame = FALSE)
   process_graph = sent_job$process
   newJob = Job$new(process = process_graph)
 
   job = newJob$run()
   format = job$output
   #gdalcubes_options(threads = 8)
-
+  #print(process_graph)
 
     if (class(format) == "list") {
       if (format$title == "Network Common Data Form") {
         file = write_ncdf(job$results)
       }
-      if (format$title == "GeoTiff") {
+      else if (format$title == "GeoTiff") {
         file = write_tif(job$results)
       }
       else {
@@ -181,7 +178,7 @@ browser()
       if (format == "NetCDF") {
         file = write_ncdf(job$results)
       }
-      if (format == "GTiff") {
+      else if (format == "GTiff") {
         file = write_tif(job$results)
       }
       else {
@@ -250,10 +247,6 @@ addEndpoint = function() {
   Session$createEndpoint(path = "/process_graphs",
                          method = "POST",
                          handler = .createProcessGraph)
-
-  Session$createEndpoint(path = "/process_graphs",
-                         method = "GET",
-                         handler = .listUserProcesses)
 
   Session$createEndpoint(path = "/jobs",
                          method = "GET",
