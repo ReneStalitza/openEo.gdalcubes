@@ -71,7 +71,7 @@ SessionInstance <- R6Class(
       port = private$config$api.port
       host = private$config$host
 
-      self$setBaseUrl(port, host)
+      #self$setBaseUrl(port, host)
       private$initRouter()
       self$initDirectory()
 
@@ -79,7 +79,7 @@ SessionInstance <- R6Class(
       loadDemoData()
 
       private$router$run(port = port, host = host)
-      #private$router$run(port = port)
+
     },
 
     #' @description Set base url
@@ -108,8 +108,8 @@ SessionInstance <- R6Class(
         dir.create(paste(private$config$workspace.path, "Demofiles", sep = "/"))
       }
 
-      if (is.null(private$config$data.path)) {
-        private$config$data.path <- paste(private$config$workspace.path,"Demofiles",sep="/")
+      if (is.null(private$config$demo.path)) {
+        private$config$demo.path <- paste(private$config$workspace.path,"Demofiles",sep="/")
       }
     },
 
@@ -209,9 +209,10 @@ SessionInstance <- R6Class(
     #' @param job Job to be executed
     #'
     runJob = function(job) {
-    
+
      tryCatch({
         dir = paste(Session$getConfig()$workspace.path, job$output.folder, sep = "/")
+    
         job = job$run()
         format = job$output
 
@@ -222,16 +223,22 @@ SessionInstance <- R6Class(
           if (format$title == "Network Common Data Form") {
             write_ncdf(job$results, file.path(dir, basename(tempfile(fileext = ".nc"))))
           }
-          if (format$title == "GeoTiff") {
+          else if (format$title == "GeoTiff") {
             write_tif(job$results, dir = dir)
+          }
+          else {
+            throwError("FormatUnsupported")
           }
         }
         else {
           if (format == "NetCDF") {
             write_ncdf(job$results, file.path(dir, basename(tempfile(fileext = ".nc"))))
           }
-          if (format == "GTiff") {
+          else if (format == "GTiff") {
             write_tif(job$results, dir = dir)
+          }
+          else {
+            throwError("FormatUnsupported")
           }
         }
       }, error = function(e) {
