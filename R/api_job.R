@@ -8,7 +8,7 @@
 
     links = list(
       rel = "self",
-      href = paste(Session$getBaseUrl(), "jobs", sep = "/")
+      href = paste(Session$getConfig()$base_url, "jobs", sep = "/")
       )
 
     result = as.vector(c(jobs, links =list(list(links))))
@@ -59,7 +59,7 @@
     Session$assignJob(job)
 
     res$setHeader(name = "Location",
-                  value= paste(Session$getBaseUrl(), "jobs", job$id, sep ="/"))
+                  value= paste(Session$getConfig()$base_url, "jobs", job$id, sep ="/"))
     res$setHeader(name = "OpenEO-Identifier",value = job$id)
     res$status = 201
 
@@ -87,7 +87,7 @@
 }
 
 .getJobResults = function(req, res, job_id) {
-browser()
+
   tryCatch({
     index = getJobIdIndex(job_id)
 
@@ -104,9 +104,9 @@ browser()
       }
 
       job_results = paste(Session$getConfig()$workspace.path, "jobs", job_id, sep="/")
-      base = paste0(Session$getBaseUrl(), "/","result/", job_id)
+      base = paste0(Session$getConfig()$base_url, "/","result/", job_id)
 
-      links = paste(Session$getBaseUrl(), "jobs",job_id, list.files(job_results), sep="/")
+      links = paste(Session$getConfig()$base_url, "jobs",job_id, list.files(job_results), sep="/")
       files = list.files(job_results)
 
       assets = list()
