@@ -12,12 +12,13 @@ SessionConfig = function(api.port = NULL, host = NULL) {
   if (is.null(host)) {
     host = "127.0.0.1"
   }
-#  if (is.null(host) || host == "0.0.0.0") {
-#    base = paste("http://", "localhost:", api.port,  sep = "")
-#  }
-#  else {
+
+  if (host == "0.0.0.0") {
+    base = paste("http://", "localhost:", api.port,  sep = "")
+  }
+  else {
     base = paste("http://",host, ":", api.port,  sep = "")
-#  }
+  }
 
 
   default = list(
@@ -32,7 +33,7 @@ SessionConfig = function(api.port = NULL, host = NULL) {
 
     links = NULL,
 
-    data.path = NULL,
+    demo.path = NULL,
     workspace.path = NULL,
 
     user = "user",
@@ -45,13 +46,25 @@ SessionConfig = function(api.port = NULL, host = NULL) {
     outputFormats = list(
       GTiff = list(
         title = "GeoTiff",
-        description = "Export to GeoTiff",
-        gis_data_types = list("raster")
+        description = "Export to GeoTiff.",
+        gis_data_types = list("raster"),
+        parameters = list(
+          format = list(
+            type = "string",
+            description = "GeoTiff"
+          )
+        )
       ),
       NetCDF = list(
         title = "Network Common Data Form",
         description = "Export to NetCDF",
-        gis_data_types = list("raster")
+        gis_data_types = list("raster"),
+        parameters = list(
+          format = list(
+            type = "string",
+            description = "NetCDF"
+          )
+        )
 
       )
     ),
