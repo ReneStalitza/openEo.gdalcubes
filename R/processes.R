@@ -61,7 +61,7 @@ changeProjection = function(extent) {
 load_collection = Process$new(
   id = "load_collection",
   description = "Loads a collection from the current back-end by its id and returns it as processable data cube",
-  categories = list("cubes", "import"),
+  categories = as.array("cubes", "import"),
   summary = "Load a collection",
   parameters = list(
     Parameter$new(
@@ -75,8 +75,37 @@ load_collection = Process$new(
       name = "spatial_extent",
       description = "Limits the data to load from the collection to the specified bounding box",
       schema = list(
+        list(
+          title = "Bounding box",
+          type = "object",
+          subtype = "bounding-box",
+          properties = list(
+            east = list(
+              description = "East (upper right corner, coordinate axis 1).",
+              type = "number"),
+            west = list(
+              description = "West lower left corner, coordinate axis 1).",
+              type = "number"),
+            north = list(
+              description = "North (upper right corner, coordinate axis 2).",
+              type = "number"),
+            south = list(
+              description = "South (lower left corner, coordinate axis 2).",
+              type = "number")
+          ),
+        required = c("east", "west", "south", "north")
+      ),
+      list(
+        title = "GeoJson",
         type = "object",
-        subtype = "bounding-box")
+        subtype = "geojson"
+      ),
+      list(
+        title = "No filter",
+        description = "Don't filter spatially. All data is included in the data cube.",
+        type = "null"
+      )
+     )
     ),
     Parameter$new(
       name = "temporal_extent",
@@ -95,10 +124,9 @@ load_collection = Process$new(
 
   ),
   returns = eo_datacube,
-  operation = function(id, spatial_extent, temporal_extent, bands = NULL) {
+  operation = function(id, spatial_extent, temporal_extent, bands = NULL, job) {
 
     ic = Session$data[[id]]$getCollection()
-    #ic = image_collection("C:/Users/ReneS/Documents/R/BSc/openEo.gdalcubes/data/L8.db")
 
     if (! is.null(spatial_extent$crs)) {
       crsString = toString(spatial_extent$crs)
@@ -150,7 +178,7 @@ load_collection = Process$new(
 save_result = Process$new(
   id = "save_result",
   description = "Saves processed data to the local user workspace / data store of the authenticated user.",
-  categories = list("cubes", "export"),
+  categories = as.array("cubes", "export"),
   summary = "Save processed data to storage",
   parameters = list(
     Parameter$new(
@@ -180,10 +208,9 @@ save_result = Process$new(
     description = "false if saving failed, true otherwise.",
     schema = list(type = "boolean")
   ),
-  operation = function(data, format, options = NULL) {
+  operation = function(data, format, options = NULL, job) {
 
-    parent.frame()$job$setOutput(format)
-
+    job$setOutput(format)
     return(data)
   }
 )
@@ -192,7 +219,7 @@ save_result = Process$new(
 filter_bands = Process$new(
   id = "filter_bands",
   description = "Filters the bands in the data cube so that bands that don't match any of the criteria are dropped from the data cube.",
-  categories = list("cubes", "filter"),
+  categories = as.array("cubes", "filter"),
   summary = "Filter the bands by name",
   parameters = list(
     Parameter$new(
@@ -211,7 +238,7 @@ filter_bands = Process$new(
     )
   ),
   returns = eo_datacube,
-  operation = function(data, bands) {
+  operation = function(data, bands, job) {
 
     if(! is.null(bands)) {
       cube = select_bands(data, bands)
@@ -224,7 +251,7 @@ filter_bands = Process$new(
 filter_bbox = Process$new(
   id = "filter_bbox",
   description = "The filter retains a pixel in the data cube if the point at the pixel center intersects with the bounding box (as defined in the Simple Features standard by the OGC).",
-  categories = list("cubes", "filter"),
+  categories = as.array("cubes", "filter"),
   summary = "Limits the data cube to the specified bounding box.",
   parameters = list(
     Parameter$new(
@@ -238,12 +265,28 @@ filter_bbox = Process$new(
       name = "extent",
       description = "A bounding box, which may include a vertical axis (see base and height).",
       schema = list(
+        title = "Bounding box",
         type = "object",
-        subtype = "bounding-box")
+        subtype = "bounding-box",
+        properties = list(
+          east = list(
+            description = "East (upper right corner, coordinate axis 1).",
+            type = "number"),
+          west = list(
+            description = "West lower left corner, coordinate axis 1).",
+            type = "number"),
+          north = list(
+            description = "North (upper right corner, coordinate axis 2).",
+            type = "number"),
+          south = list(
+            description = "South (lower left corner, coordinate axis 2).",
+            type = "number")
+        ),
+      required = c("east", "west", "south", "north"))
     )
   ),
   returns = eo_datacube,
-  operation = function(data, extent) {
+  operation = function(data, extent, job) {
 
     if (! is.null(extent$crs)) {
       crsString = toString(extent$crs)
@@ -273,7 +316,7 @@ filter_bbox = Process$new(
 reduce_dimension = Process$new(
   id = "reduce_dimension",
   description = "Applies a unary reducer to a data cube dimension by collapsing all the pixel values along the specified dimension into an output value computed by the reducer. ",
-  categories = list("cubes", "reducer"),
+  categories = as.array("cubes", "reducer"),
   summary = "Reduce dimensions",
   parameters = list(
     Parameter$new(
@@ -296,14 +339,13 @@ reduce_dimension = Process$new(
             schema = list(
               type = "array",
               subtype = "labeled-array",
-              items = list(description = "Any data type",
-                           type = "any"))
+              items = list(description = "Any data type")
+            )
           ),
           Parameter$new(
             name = "context",
             description = "Additional data passed by the user.",
             schema = list(
-              type = "any",
               description = "Any data type"),
             optional = TRUE
           )
@@ -320,13 +362,12 @@ reduce_dimension = Process$new(
       name = "context",
       description = "Additional data to be passed to the reducer.",
       schema = list(
-        type = "any",
         description = "Any data type"),
       optional = TRUE
     )
   ),
   returns = eo_datacube,
-  operation = function(data, reducer, dimension) {
+  operation = function(data, reducer, dimension, job) {
 
     if(dimension == "t" || dimension == "time") {
 
@@ -356,7 +397,7 @@ reduce_dimension = Process$new(
 merge_cubes = Process$new(
   id = "merge_cubes",
   description = "The data cubes have to be compatible. The two provided data cubes will be merged into one data cube. The overlap resolver is not supported.",
-  categories = "cubes",
+  categories = as.array("cubes"),
   summary = "Merging two data cubes",
   parameters = list(
     Parameter$new(
@@ -375,15 +416,13 @@ merge_cubes = Process$new(
     ),
     Parameter$new(
       name = "context",
-      description = "Additional data to be passed to the process.",
-      schema = list(
-        type = "any",
-        description = "Any data type"),
+      description = "Additional data passed by the user.",
+      schema = list(description = "Any data type."),
       optional = TRUE
     )
   ),
   returns = eo_datacube,
-  operation = function(cube1, cube2, context) {
+  operation = function(cube1, cube2, context, job) {
 
     if("cube" %in% class(cube1) && "cube" %in% class(cube2)) {
 
@@ -407,7 +446,7 @@ merge_cubes = Process$new(
 array_element = Process$new(
   id = "array_element",
   description = "Returns the element with the specified index or label from the array.",
-  categories = list("arrays", "reducer"),
+  categories = as.array("arrays", "reducer"),
   summary = "Get an element from an array",
   parameters = list(
     Parameter$new(
@@ -436,8 +475,8 @@ array_element = Process$new(
   ),
   returns = list(
     description = "The value of the requested element.",
-    schema = list(type = "any")),
-  operation = function(data, index = NULL, label = NULL, return_nodata = FALSE) {
+    schema = list(description = "Any data type is allowed.")),
+  operation = function(data, index = NULL, label = NULL, return_nodata = FALSE, job) {
 
     if (class(data) == "list") {
       bands = bands(data$data)$name
@@ -465,7 +504,7 @@ array_element = Process$new(
 rename_labels = Process$new(
   id = "rename_labels",
   description = "Renames the labels of the specified dimension in the data cube from source to target.",
-  categories = "cubes",
+  categories = as.array("cubes"),
   summary = "Rename dimension labels",
   parameters = list(
     Parameter$new(
@@ -497,12 +536,12 @@ rename_labels = Process$new(
     )
   ),
   returns = eo_datacube,
-  operation = function(data, dimension, target, source = NULL) {
+  operation = function(data, dimension, target, source = NULL, job) {
 
     if (dimension == "bands") {
       if (! is.null(source)) {
           if(class(source) == "number" || class(source) == "integer") {
-            band = bands(data)$name[source]
+            band = as.character(bands(data)$name[source])
             cube = apply_pixel(data, band, names = target)
           }
           else if (class(source) == "string" || class(source) == "character") {
@@ -513,8 +552,10 @@ rename_labels = Process$new(
           }
       }
       else {
-        band = bands(data)$name[1]
+
+        band = as.character(bands(data)$name[1])
         cube = apply_pixel(data, band, names = target)
+
       }
       return(cube)
     }
