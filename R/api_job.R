@@ -1,4 +1,5 @@
 # job handlers
+#' @importFrom tools file_ext
 
 .listAllJobs = function() {
   tryCatch({
@@ -99,10 +100,9 @@
       if (job$status == "created") {
         throwError("JobNotStarted")
       }
-      if (job$status == "finished") {
+      if (job$status == "running") {
         throwError("JobNotFinished")
       }
-
       job_results = paste(Session$getConfig()$workspace.path, "jobs", job_id, sep="/")
       base = paste0(Session$getConfig()$base_url, "/","result/", job_id)
 
