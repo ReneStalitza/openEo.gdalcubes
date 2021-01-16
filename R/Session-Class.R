@@ -212,12 +212,9 @@ SessionInstance <- R6Class(
 
      tryCatch({
         dir = paste(Session$getConfig()$workspace.path, job$output.folder, sep = "/")
-    
+
         job = job$run()
         format = job$output
-
-        #gdalcubes::_options(threads = 8)
-        #gdalcubes_options(ncdf_compression_level = 1)
 
         if (class(format) == "list") {
           if (format$title == "Network Common Data Form") {

@@ -1,24 +1,13 @@
-FROM openeor/r-tidy-geospatial
+FROM app3
 MAINTAINER Rene Stalitza (r_stal01@uni-muenster.de)
-LABEL version="1.0.0"
-LABEL description="A simple openEO backend including gdalcubes"
 
-# create the path for the user files
-RUN mkdir -p /opt/dockerfiles/ && mkdir -p /var/openeo/workspace/ && mkdir -p /var/openeo/workspace/data/
+RUN mkdir -p /opt/dockerfiles/ && mkdir -p /var/openeo/workspace/ && mkdir -p /var/openeo/workspace/data/ && mkdir -p /var/openeo/workspace/Demofiles/
 
 COPY ./ /opt/dockerfiles/
 
-RUN apt-get update -qq && apt-get -y --no-install-recommends install \
-	gdal-bin \
-&& install2.r --error \
-	--deps TRUE \
-  -r 'http://cran.rstudio.com' \
-	plumber \
-	gdalcubes \
-	useful \
-	ids \
-	R6 \
-	&& R -e "devtools::install('/opt/dockerfiles',dependencies=TRUE)"
+COPY data/ /var/openeo/workspace/data
+
+RUN Rscript -e "remotes::install_local('/opt/dockerfiles',dependencies=TRUE, force = TRUE)"
 
 # cmd or entrypoint for startup
 CMD ["R", "-q", "--no-save", "-f /opt/dockerfiles/Dockerfiles/start.R"]

@@ -10,7 +10,7 @@
 #' @field output Format of the output
 #' @field openEoGraph Store the openEo graph for the job info
 #'
-#' @importFrom R6 R6Class
+#' @importFrom ids random_id
 #'
 #' @export
 Job <- R6Class(
@@ -39,7 +39,7 @@ Job <- R6Class(
     initialize = function(id = NA, process = NULL) {
 
       if (is.na(id)) {
-        self$id = ids::random_id(bytes = 6)
+        self$id = random_id(bytes = 6)
       }
       else {
         self$id = id

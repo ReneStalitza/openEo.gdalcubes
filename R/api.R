@@ -1,5 +1,6 @@
 #' @import dplyr
 #' @import gdalcubes
+#' @importFrom base64enc base64decode
 #' @include Session-Class.R
 #' @include Router.R
 #' @include math-processes.R
@@ -113,7 +114,7 @@ NULL
 .login_basic = function(req, res) {
   auth = req$HTTP_AUTHORIZATION
   encoded = substr(auth,7,nchar(auth))
-  decoded = rawToChar(base64enc::base64decode(encoded))
+  decoded = rawToChar(base64decode(encoded))
   user_name = unlist(strsplit(decoded,":"))[1]
   user_pwd = unlist(strsplit(decoded,":"))[2]
 
@@ -154,7 +155,7 @@ NULL
 
  tryCatch({
 
-  sent_job = jsonlite::fromJSON(req$rook.input$read_lines(),simplifyDataFrame = FALSE)
+  sent_job = fromJSON(req$rook.input$read_lines(),simplifyDataFrame = FALSE)
   process_graph = sent_job$process
   newJob = Job$new(process = process_graph)
 
@@ -189,7 +190,7 @@ NULL
     first = file[1]
     res$status = 200
     res$body = readBin(first, "raw", n = file.info(first)$size)
-    content_type = plumber:::getContentType(tools::file_ext(first))
+    content_type = plumber:::getContentType(file_ext(first))
     res$setHeader("Content-Type", content_type)
 
     return(res)

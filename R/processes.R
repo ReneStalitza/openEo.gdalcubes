@@ -1,6 +1,7 @@
 #' @include Process-class.R
 #' @import gdalcubes
 #' @import useful
+#' @import sf
 NULL
 
 #' schema_format
@@ -46,11 +47,11 @@ eo_datacube = datacube_schema()
 #' @return changed spatial extent
 changeProjection = function(extent) {
 
-  p1 = sf::st_point(c(extent$east,extent$north))
-  p2 = sf::st_point(c(extent$west,extent$south))
-  sfc = sf::st_sfc(p1, p2, crs = 4326)
-  trans = sf::st_transform(sfc, 3857)
-  bb = sf::st_bbox(trans)
+  p1 = st_point(c(extent$east,extent$north))
+  p2 = st_point(c(extent$west,extent$south))
+  sfc = st_sfc(p1, p2, crs = 4326)
+  trans = st_transform(sfc, 3857)
+  bb = st_bbox(trans)
 
   spatial_extent = list(west = bb$xmin[[1]], east = bb$xmax[[1]], north = bb$ymax[[1]], south = bb$ymin[[1]])
   return(spatial_extent)
@@ -136,7 +137,7 @@ load_collection = Process$new(
     }
 
     crs = paste("EPSG", crsString, sep = ":")
-    ex = gdalcubes::extent(ic)
+    ex = extent(ic)
 
     if(is.null(spatial_extent)) {
       if(is.null(temporal_extent)) {
@@ -304,7 +305,7 @@ filter_bbox = Process$new(
     ne = c(extent$east, extent$north)
 
     p = list(rbind(nw, sw, se, ne, nw))
-    pol = sf::st_polygon(p)
+    pol = st_polygon(p)
 
     cube = filter_geom(data, pol, srs = crs)
 

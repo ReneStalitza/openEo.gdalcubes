@@ -1,5 +1,3 @@
-#' Error
-#'
 #' @importFrom jsonlite fromJSON
 #' @importFrom jsonlite toJSON
 #' @importFrom jsonlite validate

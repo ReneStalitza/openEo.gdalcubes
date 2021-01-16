@@ -68,7 +68,7 @@ ProcessGraph <- R6Class(
     store = function() {
 
       if (is.na(self$process_graph_id)) {
-        self$process_graph_id = ids::random_id(bytes = 8)
+        self$process_graph_id = random_id(bytes = 8)
       }
 
       if (!is.null(self$process_graph)) {

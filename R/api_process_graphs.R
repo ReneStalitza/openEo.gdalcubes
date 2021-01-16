@@ -22,8 +22,3 @@
     }
 
 }
-
-
-.listUserProcesses = function(req, res) {
-  browser()
-}
