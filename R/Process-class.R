@@ -52,8 +52,6 @@ Process <- R6Class(
       self$operation = operation
     },
 
-
-
     #' @description List information about the process
     #'
     processInfo = function() {
@@ -69,7 +67,6 @@ Process <- R6Class(
         parameters = parameterList,
         returns = self$returns
       )
-
       return(info)
     },
 
@@ -93,8 +90,6 @@ Process <- R6Class(
 
       invisible(self)
     }
-
-
   )
 )
 
