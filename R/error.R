@@ -1,12 +1,9 @@
-#' Error
-#'
 #' @importFrom jsonlite fromJSON
 #' @importFrom jsonlite toJSON
 #' @importFrom jsonlite validate
 #' @docType data
 #' @usage data(errors)
 NULL
-
 
 handleError = function(e) {
 
