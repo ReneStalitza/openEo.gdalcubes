@@ -243,7 +243,6 @@ SessionInstance <- R6Class(
         })
     }
   ),
-
   private = list(
 
     endpoints = NULL,
@@ -257,9 +256,7 @@ SessionInstance <- R6Class(
       private$router = Router$new()
       private$router$registerHook("postroute",.cors_filter)
       private$router$filter("authorization", .authorized, serializer = serializer_unboxed_json())
-
     }
-
   )
 )
 

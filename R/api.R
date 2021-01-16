@@ -283,7 +283,7 @@ addEndpoint = function() {
                          handler = .executeSynchronous,
                          filter = TRUE)
 
-
+# assign processes
   Session$assignProcess(load_collection)
   Session$assignProcess(save_result)
   Session$assignProcess(filter_bands)
@@ -300,6 +300,4 @@ addEndpoint = function() {
   Session$assignProcess(subtract)
   Session$assignProcess(multiply)
   Session$assignProcess(divide)
-
-
 }

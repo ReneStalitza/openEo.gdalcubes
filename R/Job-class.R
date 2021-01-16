@@ -89,7 +89,7 @@ Job <- R6Class(
     #'
     load = function() {
       index = getJobIdIndex(self$id)
-#browser()
+
       if (! is.na(index)) {
         storedJob = Session$jobs[[index]]
 

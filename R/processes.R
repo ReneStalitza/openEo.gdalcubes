@@ -57,7 +57,6 @@ changeProjection = function(extent) {
   return(spatial_extent)
 }
 
-
 #' load collection
 load_collection = Process$new(
   id = "load_collection",
@@ -392,7 +391,6 @@ reduce_dimension = Process$new(
     }
   }
 )
-
 
 #' merge_cubes
 merge_cubes = Process$new(

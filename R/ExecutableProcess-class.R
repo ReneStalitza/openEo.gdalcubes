@@ -26,7 +26,7 @@ ExecutableProcess <- R6Class(
                         process= NULL) {
 
           if (! is.null(process)) {
-#browser()
+
             variables = names(process)
             for (key in variables) {
               value = process[[key]]

@@ -49,7 +49,6 @@ ProcessGraph <- R6Class(
       if (!is.na(description)) {
         self$description = description
       }
-
     },
 
     #' @description Attach corresponding process graph
@@ -60,7 +59,6 @@ ProcessGraph <- R6Class(
       if (! is.na(index)) {
         self$process_graph = Session$graphs[[index]]$process_graph
       }
-
     },
 
     #' @description Attach process graph to the Session
@@ -89,7 +87,6 @@ ProcessGraph <- R6Class(
       return(res)
     }
   ),
-
   private = list(
 
       #' Make an executable process for the given graph
@@ -141,11 +138,7 @@ ProcessGraph <- R6Class(
             for (val in value) {
               if (class(val) == "list" && "from_node" %in% names(val)) {
                 executable$setParameter(key, private$loadNode(graph, val$from_node, job))
-              }
-             # else if (class(val) == "list" && "from_parameter" %in% names(val)) {
-            #    parent = parent.frame(2)
-            #    executable$setParameter(key, parent$executable$parameters[[1]]$value)
-             # }
+              }             
               else {
                 executable$setParameter(key, val)
               }
@@ -163,10 +156,7 @@ ProcessGraph <- R6Class(
         else {
         stop(paste("Cannot load process",processId))
         }
-
-
       }
-
   )
 )
 #' Check if process graph

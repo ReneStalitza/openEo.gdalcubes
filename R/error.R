@@ -5,7 +5,6 @@
 #' @usage data(errors)
 NULL
 
-
 handleError = function(e) {
 
   i = 1

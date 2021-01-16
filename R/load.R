@@ -1,4 +1,4 @@
-file.path#' load demo data
+#' load demo data
 #'
 #' @include Session-Class.R
 #'

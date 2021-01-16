@@ -13,8 +13,6 @@ Collection <- R6Class(
     title = NULL,
     description = NULL,
 
-
-
     #' @description Initialize collection
     #'
     #' @param id Id of the collection
@@ -26,8 +24,6 @@ Collection <- R6Class(
       self$id = id
       self$title = title
       self$description = description
-
-
     },
 
     #' @description Add image collection to the collection class object
@@ -164,12 +160,10 @@ Collection <- R6Class(
       )
     }
   ),
-
   private = list(
     imageCollection = NULL,
     metadata = NULL
   )
-
 )
 
 #' @export
