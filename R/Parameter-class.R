@@ -37,9 +37,7 @@ Parameter <- R6Class(
       self$description = description
       self$schema = schema
       self$optional = optional
-
-    },
-
+   },
 
     #' @description Get the information of the parameter
     #'
@@ -52,7 +50,6 @@ Parameter <- R6Class(
         schema = list()
         schema$type = self$schema$type
         schema$subtype = self$schema$subtype
-
 
         schema$parameters = lapply(self$schema$parameters, function(x) {
           return(x$parameterInfo())
@@ -68,11 +65,8 @@ Parameter <- R6Class(
         schema = schema,
         optional = self$optional
       )
-
-
       return(info)
     }
-
   )
 )
 
