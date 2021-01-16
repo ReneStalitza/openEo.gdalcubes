@@ -128,7 +128,7 @@
 .getJobFiles = function(req, res, job_id, file) {
 tryCatch({
   resultFile = paste(Session$getConfig()$workspace.path, "jobs", job_id, file,sep="/")
-  content_type = plumber:::getContentType(file_ext(resultFile))
+  content_type = plumber:::getContentType(tools::file_ext(resultFile))
 
   res$body = readBin(resultFile, "raw", n = file.info(resultFile)$size)
   res$setHeader("Content-Type", content_type)
