@@ -18,15 +18,7 @@ Imports:
     plumber,
     R6,
     dplyr,
-    gdalcubes,
-    sf,
-    useful,
-    base64enc,
-    ids,
-    jsonlite,
-    rlang,
-    tibble,
-    tools
+    gdalcubes
 Collate:
     'api_process_graphs.R'
     'api_job.R'
