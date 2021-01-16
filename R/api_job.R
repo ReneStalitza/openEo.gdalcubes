@@ -1,5 +1,4 @@
 # job handlers
-#' @importFrom tools file_ext
 
 .listAllJobs = function() {
   tryCatch({
