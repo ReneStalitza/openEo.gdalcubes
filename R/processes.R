@@ -1,7 +1,6 @@
 #' @include Process-class.R
 #' @import gdalcubes
 #' @import useful
-#' @import sf
 NULL
 
 #' schema_format
