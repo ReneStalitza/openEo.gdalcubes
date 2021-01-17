@@ -34,9 +34,7 @@ SessionInstance <- R6Class(
       }
 
       private$config = configuration
-
       self$initEndpoints()
-
     },
 
     #' @description Get endpoints
@@ -71,7 +69,6 @@ SessionInstance <- R6Class(
       port = private$config$api.port
       host = private$config$host
 
-      #self$setBaseUrl(port, host)
       private$initRouter()
       self$initDirectory()
 
@@ -79,7 +76,6 @@ SessionInstance <- R6Class(
       loadDemoData()
 
       private$router$run(port = port, host = host)
-
     },
 
     #' @description Set base url
@@ -201,7 +197,6 @@ SessionInstance <- R6Class(
       newJob = list(job)
       names(newJob) = job$id
       self$jobs = append(self$jobs, newJob)
-
     },
 
     #' @description Execute the job
@@ -244,7 +239,6 @@ SessionInstance <- R6Class(
     }
   ),
   private = list(
-
     endpoints = NULL,
     router = NULL,
     config = NULL,
@@ -252,7 +246,6 @@ SessionInstance <- R6Class(
     base_url = NULL,
 
     initRouter = function() {
-
       private$router = Router$new()
       private$router$registerHook("postroute",.cors_filter)
       private$router$filter("authorization", .authorized, serializer = serializer_unboxed_json())

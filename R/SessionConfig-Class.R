@@ -20,7 +20,6 @@ SessionConfig = function(api.port = NULL, host = NULL) {
     base = paste("http://",host, ":", api.port,  sep = "")
   }
 
-
   default = list(
     api_version = "1.0.0",
     backend_version = "1.0.0",
@@ -32,7 +31,6 @@ SessionConfig = function(api.port = NULL, host = NULL) {
     description = "This is an openEo-compliant R driver interfacing with the package gdalcubes",
 
     links = NULL,
-
     demo.path = NULL,
     workspace.path = NULL,
 
@@ -83,7 +81,8 @@ SessionConfig = function(api.port = NULL, host = NULL) {
       )
     ),
 
-    OGC_conformanceLink = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core")
+    OGC_conformanceLink = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core"
+  )
 
   class(default) = "ServerConfig"
   return(default)

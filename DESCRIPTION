@@ -1,15 +1,13 @@
 Package: openEo.gdalcubes
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: An openEo R-package interfacing with gdalcubes
+Version: 0.0.1
 Authors@R:
-    person(given = "First",
-           family = "Last",
+    person(given = "Rene",
+           family = "Stalitza",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+           email = "r_stal01@uni-muenster.de")
+Description: This package operates as an openEo-compliant back-end, interfacing with the package 'gdalcubes'
+License: MIT License
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -18,8 +16,14 @@ Imports:
     plumber,
     R6,
     dplyr,
-    gdalcubes,
-    base64enc
+    base64enc,
+    jsonlite,
+    tibble,
+    rlang,
+    ids,
+    tools,
+    sf,
+    useful
 Collate:
     'api_process_graphs.R'
     'api_job.R'
@@ -38,4 +42,5 @@ Collate:
     'error.R'
     'load.R'
 Depends:
-    R (>= 3.5.0)
+    R (>= 3.6.0),
+    gdalcubes (>= 0.3.1)

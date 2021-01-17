@@ -29,14 +29,11 @@
         },
         error = function(e) {
           throwError("Internal",message=e)
-        }
-      )
-
+      })
     }
     else {
       throwError("JobNotFound")
     }
-
     return(res)
   }, error = handleError)
 }
@@ -44,7 +41,6 @@
 .createNewJob = function(req,res) {
   tryCatch({
     sent_job = fromJSON(req$rook.input$read_lines(),simplifyDataFrame = FALSE)
-
     process_graph = sent_job$process
 
     job = Job$new(process = process_graph)
@@ -55,7 +51,6 @@
     if (!is.null(sent_job$description)) { job$description = sent_job$description }
 
     writeJobInfo(job)
-
     Session$assignJob(job)
 
     res$setHeader(name = "Location",
@@ -65,7 +60,6 @@
 
     return(res)
   }, error = handleError)
-
 }
 
 .startJob = function(req, res, job_id) {
@@ -82,8 +76,6 @@
 
     return(res)
     },error=handleError)
-
-
 }
 
 .getJobResults = function(req, res, job_id) {

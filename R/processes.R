@@ -488,7 +488,6 @@ array_element = Process$new(
     if(! is.null(index)) {
       band = bands[index + 1]
     }
-
     else if (! is.null(label) && label %in% bands) {
       band = label
     }
@@ -551,10 +550,8 @@ rename_labels = Process$new(
           }
       }
       else {
-
         band = as.character(bands(data)$name[1])
         cube = apply_pixel(data, band, names = target)
-
       }
       return(cube)
     }
