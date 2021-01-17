@@ -1,6 +1,6 @@
 Package: openEo.gdalcubes
 Title: An openEo R-package interfacing with gdalcubes
-Version: 0.0.1
+Version: 0.1.0
 Authors@R:
     person(given = "Rene",
            family = "Stalitza",
@@ -23,7 +23,8 @@ Imports:
     ids,
     tools,
     sf,
-    useful
+    useful,
+    gdalcubes
 Collate:
     'api_process_graphs.R'
     'api_job.R'
@@ -42,5 +43,4 @@ Collate:
     'error.R'
     'load.R'
 Depends:
-    R (>= 3.6.0),
-    gdalcubes (>= 0.3.1)
+    R (>= 3.6.0)
