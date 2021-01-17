@@ -19,7 +19,12 @@ Imports:
     R6,
     dplyr,
     gdalcubes,
-    base64enc
+    base64enc,
+    jsonlite,
+    tibble,
+    rlang,
+    ids,
+    tools
 Collate:
     'api_process_graphs.R'
     'api_job.R'
