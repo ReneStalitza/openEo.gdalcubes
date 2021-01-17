@@ -1,6 +1,6 @@
 # openEo.gdalcubes
 
-**openEo.gdalcubes** is an R package operating as a proof-of-concept [openEO](http://openeo.org/) webservice. It is based on the API version 1.0.0 and using 'plumber' for the web API. This package includes the [gdalcubes](https://github.com/appelmar/gdalcubes) library for on-demand processing of data cubes from satellite image collections. Be aware that the webservice is not production-ready and unexpected errors might occur.
+**openEo.gdalcubes** is an R package operating as a proof-of-concept [openEO](http://openeo.org/) webservice. It is compliant to the API version 1.0.0 and using 'plumber' for the web API. This package includes the [gdalcubes](https://github.com/appelmar/gdalcubes) library for on-demand processing of data cubes from satellite image collections. Be aware that the webservice is not production-ready and unexpected errors might occur.
 
 ## System requirements:
 * gdal
