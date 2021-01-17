@@ -70,9 +70,6 @@ Job <- R6Class(
     #'
     store = function() {
 
-      if (is.na(self$process$process_graph$process_graph_id) || is.null(self$process$process_graph$process_graph_id)) {
-        #self$process$process_graph$store()
-      }
       if (is.null(getJobIdIndex(self$id))) {
 
         Session$jobs = append(Session$jobs, list(list(id = self$id,
@@ -141,23 +138,18 @@ Job <- R6Class(
         description = self$description,
         process = list(process_graph = self$openEoGraph),
         status = self$status,
-        created = self$created
-      )
+        created = self$created)
 
       return(info)
     }
-
   ),
 
-#' @field output.folder Set a new output folder
-active = list(
-  output.folder = function() {
-    return(paste(Session$config$workspace.path, "jobs", self$id,sep="/"))
-  }
-)
-
-
-
+  #' @field output.folder Set a new output folder
+  active = list(
+    output.folder = function() {
+      return(paste(Session$config$workspace.path, "jobs", self$id,sep="/"))
+    }
+  )
 )
 
 #' getJobIdIndex
