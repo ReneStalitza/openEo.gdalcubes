@@ -9,7 +9,6 @@ loadDemoData = function() {
   demo.path = Session$getConfig()$demo.path
   file.path = paste(demo.path,"L8_demo", sep = "/")
 
-
   if (! is.element("L8.db",list.files(demo.path))) {
 
     if (! is.element("L8_demo", list.files(demo.path))) {
