@@ -235,7 +235,8 @@ addEndpoint = function() {
 
   Session$createEndpoint(path = "/jobs",
                          method = "GET",
-                         handler = .listAllJobs)
+                         handler = .listAllJobs,
+                         filter = TRUE)
 
   Session$createEndpoint(path = "/jobs",
                          method = "POST",
@@ -244,19 +245,23 @@ addEndpoint = function() {
 
   Session$createEndpoint(path = "/jobs/{job_id}",
                          method = "GET",
-                         handler = .getJobById)
+                         handler = .getJobById,
+                         filter = TRUE)
 
   Session$createEndpoint(path = "/jobs/{job_id}/results",
                          method = "POST",
-                         handler = .startJob)
+                         handler = .startJob,
+                         filter = TRUE)
 
  Session$createEndpoint(path = "/jobs/{job_id}/results",
                         method = "GET",
-                        handler = .getJobResults)
+                        handler = .getJobResults,
+                        filter = TRUE)
 
   Session$createEndpoint(path = "/jobs/{job_id}/{file}",
                          method = "GET",
-                         handler = .getJobFiles)
+                         handler = .getJobFiles,
+                         filter = TRUE)
 
   Session$createEndpoint(path = "/credentials/basic",
                          method = "GET",
