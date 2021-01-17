@@ -34,7 +34,6 @@ ExecutableProcess <- R6Class(
                 next()
               }
               else {
-               # if(key == "parameters")
                 self[[key]] = value
               }
             }
@@ -43,7 +42,6 @@ ExecutableProcess <- R6Class(
           else {
             stop("No process provided")
           }
-
     },
 
     #' @description Run the operation including a generated list of parameters
