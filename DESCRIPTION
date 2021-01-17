@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "r_stal01@uni-muenster.de")
 Description: This package operates as an openEo-compliant back-end, interfacing with the package 'gdalcubes'
-License: MIT License
+License: MIT License + file License
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
