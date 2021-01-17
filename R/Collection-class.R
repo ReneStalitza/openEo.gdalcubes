@@ -37,7 +37,6 @@ Collection <- R6Class(
 
       private$imageCollection = ImageCollection
       self$setMetadata()
-
     },
 
     #' @description Get assigned image collection
