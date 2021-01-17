@@ -18,7 +18,6 @@ Imports:
     plumber,
     R6,
     dplyr,
-    gdalcubes,
     base64enc,
     jsonlite,
     tibble,
@@ -43,4 +42,5 @@ Collate:
     'error.R'
     'load.R'
 Depends:
-    R (>= 3.5.0)
+    R (>= 3.5.0),
+    gdalcubes (>= 0.3.1)
