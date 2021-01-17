@@ -23,7 +23,8 @@ Imports:
     tibble,
     rlang,
     ids,
-    tools
+    tools,
+    sf
 Collate:
     'api_process_graphs.R'
     'api_job.R'
@@ -42,5 +43,5 @@ Collate:
     'error.R'
     'load.R'
 Depends:
-    R (>= 3.5.0),
+    R (>= 3.6.0),
     gdalcubes (>= 0.3.1)
