@@ -24,7 +24,8 @@ Imports:
     rlang,
     ids,
     tools,
-    sf
+    sf,
+    useful
 Collate:
     'api_process_graphs.R'
     'api_job.R'
