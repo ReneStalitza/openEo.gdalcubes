@@ -12,26 +12,24 @@ NULL
 .capabilities = function() {
 
   config = Session$getConfig()
-
   endpoints = Session$getEndpoints()
 
   endpoints = endpoints %>% group_by(path) %>% summarise(
     paths=list(tibble(path,method) %>% (function(x,...){
       return(list(path=unique(x$path),methods=as.list(x$method)))
-    }))
-  )
+    })))
 
   list = list()
-    list$api_version = config$api_version
-    list$backend_version = config$backend_version
-    list$stac_version = config$stac_version
-    list$id = config$id
-    list$title = config$title
-    list$description = config$description
-    list$endpoints = endpoints$paths
-    list$links = list(list(
-      rel = "self",
-      href = paste(config$base_url, "", sep = "/")))
+  list$api_version = config$api_version
+  list$backend_version = config$backend_version
+  list$stac_version = config$stac_version
+  list$id = config$id
+  list$title = config$title
+  list$description = config$description
+  list$endpoints = endpoints$paths
+  list$links = list(list(
+    rel = "self",
+    href = paste(config$base_url, "", sep = "/")))
 
   return(list)
 
@@ -40,7 +38,6 @@ NULL
 .well_known = function() {
 
   version = list(versions = list())
-
 
   obj = tibble(url = Session$getConfig()$base_url,
                api_version = Session$getConfig()$api_version,
@@ -60,10 +57,7 @@ NULL
   list$output = config$outputFormats
   list$input = config$inputFormats
 
-
   return(list)
-
-
 }
 
 .conformance = function() {
@@ -72,7 +66,6 @@ NULL
   list$conformsTo = list(Session$getConfig()$OGC_conformanceLink)
 
   return(list)
-
 }
 
 .collections = function() {
@@ -111,6 +104,7 @@ NULL
 }
 
 .login_basic = function(req, res) {
+
   auth = req$HTTP_AUTHORIZATION
   encoded = substr(auth,7,nchar(auth))
   decoded = rawToChar(base64enc::base64decode(encoded))
@@ -151,49 +145,44 @@ NULL
 
 
 .executeSynchronous = function(req, res) {
-
  tryCatch({
-
   sent_job = jsonlite::fromJSON(req$rook.input$read_lines(),simplifyDataFrame = FALSE)
   process_graph = sent_job$process
   newJob = Job$new(process = process_graph)
 
   job = newJob$run()
   format = job$output
-  #gdalcubes_options(threads = 8)
-  #print(process_graph)
 
-    if (class(format) == "list") {
-      if (format$title == "Network Common Data Form") {
-        file = write_ncdf(job$results)
-      }
-      else if (format$title == "GeoTiff") {
-        file = write_tif(job$results)
-      }
-      else {
-        throwError("FormatUnsupported")
-      }
+  if (class(format) == "list") {
+    if (format$title == "Network Common Data Form") {
+      file = write_ncdf(job$results)
+    }
+    else if (format$title == "GeoTiff") {
+      file = write_tif(job$results)
     }
     else {
-      if (format == "NetCDF") {
-        file = write_ncdf(job$results)
-      }
-      else if (format == "GTiff") {
-        file = write_tif(job$results)
-      }
-      else {
-        throwError("FormatUnsupported")
-      }
+      throwError("FormatUnsupported")
     }
+  }
+  else {
+    if (format == "NetCDF") {
+      file = write_ncdf(job$results)
+    }
+    else if (format == "GTiff") {
+      file = write_tif(job$results)
+    }
+    else {
+      throwError("FormatUnsupported")
+    }
+  }
 
-    first = file[1]
-    res$status = 200
-    res$body = readBin(first, "raw", n = file.info(first)$size)
-    content_type = plumber:::getContentType(tools::file_ext(first))
-    res$setHeader("Content-Type", content_type)
+  first = file[1]
+  res$status = 200
+  res$body = readBin(first, "raw", n = file.info(first)$size)
+  content_type = plumber:::getContentType(tools::file_ext(first))
+  res$setHeader("Content-Type", content_type)
 
-    return(res)
-
+  return(res)
 },error=handleError)
 }
 
@@ -206,12 +195,8 @@ NULL
 .cors_option = function(req,res, ...) {
   res$setHeader("Access-Control-Allow-Headers", "Content-Type")
   res$setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS,PATCH")
-
-
   res$status = 204
 }
-
-
 
 #' dedicate the handler functions to the corresponding paths
 addEndpoint = function() {
