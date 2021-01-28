@@ -23,7 +23,7 @@ After starting the session, Landsat-8 demo files will be downloaded and an image
 library(openEo.gdalcubes)
 config = SessionConfig(api.port = 8000, host = "127.0.0.1")
 
-## The change the default workspace path use:
+## To change the default workspace path use:
 ## config$workspace.path = "<path/to/your/folder>"
 
 createSessionInstance(config)
