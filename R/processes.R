@@ -485,7 +485,7 @@ array_element = Process$new(
 
 
     if(! is.null(index)) {
-      band = bands[index + 1]
+      band = bands[index]
     }
     else if (! is.null(label) && label %in% bands) {
       band = label
